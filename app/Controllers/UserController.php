@@ -2,6 +2,7 @@
 
 
 use app\Model\Comment;
+use app\Model\Follow;
 use app\Model\Post;
 use app\Model\User;
 use Core\App;
@@ -16,9 +17,13 @@ class UserController
     {
         $user = User::findByUsername($username);
         $post_count = Post::post_count($user['id']);
+        $follower_count = Follow::follower_count($user['id']);
+        $following_count = Follow::following_count($user['id']);
         view('users/profile.view.php', [
             'user' => $user,
             'post_count' => $post_count,
+            'follower_count' => $follower_count,
+            'following_count' => $following_count,
         ]);
     }
 
@@ -91,6 +96,31 @@ class UserController
         $posts = Post::user_post($user_id);
         view('users/show_user_posts.view.php', [
             'posts' => $posts,
+        ]);
+
+    }
+
+    public function followers($username)
+    {
+
+        $followers = Follow::followers(\username($username)['id']);
+        $ids = array_column($followers,'follower_id');
+
+        view('users/show_followers.view.php', [
+            'follows' => $ids,
+            'title' => 'Followers'
+        ]);
+
+    }
+
+    public function followings($username)
+    {
+
+        $followings = Follow::following(\username($username)['id']);
+        $ids = array_column($followings,'following_id');
+        view('users/show_followers.view.php', [
+            'follows' => $ids,
+            'title' => 'Followings'
         ]);
 
     }

@@ -1,0 +1,185 @@
+[33mcommit d53b6d608898911a9a634c4c6c106632b61a25e1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Hamid <devhp03@gmail.com>
+Date:   Fri Aug 15 19:11:57 2025 +0200
+
+    feat(follow): implement follow/unfollow and hasFollowed and their routes
+
+ .idea/vcs.xml                        |  6 [32m++++[m
+ app/Controllers/FollowController.php | 54 [32m+++++++++++++++++++++++++++++++++++[m
+ app/Model/Follow.php                 | 55 [32m++++++++++++++++++++++++++++++++++++[m
+ app/view/posts/show.view.php         | 29 [32m+++++++++++++++++[m[31m--[m
+ helpers/functions.php                |  7 [32m+++++[m
+ routes/routes.php                    |  4 [32m+++[m
+ 6 files changed, 152 insertions(+), 3 deletions(-)
+
+[33mcommit ec9ca19d16360ae9f845487407f1faeeadb53917[m
+Merge: 4636c0f 710e66f
+Author: Hamid <devhp03@gmail.com>
+Date:   Thu Aug 14 19:01:24 2025 +0200
+
+    Merge branch 'main' of github.com:DevBrave/smc_mvc
+
+[33mcommit 710e66fde1f2d967bad8994631d0b10882570843[m
+Author: Hamidreza Ramezani <75263595+DevBrave@users.noreply.github.com>
+Date:   Thu Aug 14 18:58:57 2025 +0200
+
+    Initial commit
+
+ README.md | 2 [32m++[m
+ 1 file changed, 2 insertions(+)
+
+[33mcommit 4636c0f16acefbfa86a8c24d4b75bc7cd39f1c4d[m
+Author: Hamid <devhp03@gmail.com>
+Date:   Thu Aug 14 18:30:24 2025 +0200
+
+    Insert the small social media with mvc architecture
+
+ .idea/.gitignore                                   |     8 [32m+[m
+ .idea/inspectionProfiles/Project_Default.xml       |    22 [32m+[m
+ .idea/material_theme_project_new.xml               |    12 [32m+[m
+ .idea/modules.xml                                  |     8 [32m+[m
+ .idea/php.xml                                      |    20 [32m+[m
+ .idea/prettier.xml                                 |     8 [32m+[m
+ .idea/reservation.iml                              |    10 [32m+[m
+ Core/App.php                                       |    28 [32m+[m
+ Core/Config.php                                    |    11 [32m+[m
+ Core/Container.php                                 |    33 [32m+[m
+ Core/Database.php                                  |    59 [32m+[m
+ Core/FileUploader.php                              |    79 [32m+[m
+ Core/Request.php                                   |    54 [32m+[m
+ Core/Router.php                                    |   101 [32m+[m
+ Core/Validator.php                                 |   246 [32m+[m
+ app/Contract/MiddlewareInterface.php               |     9 [32m+[m
+ app/Controllers/Admin/AdminController.php          |    21 [32m+[m
+ app/Controllers/Admin/CommentController.php        |    31 [32m+[m
+ app/Controllers/Admin/PostController.php           |    21 [32m+[m
+ app/Controllers/Admin/TagController.php            |    37 [32m+[m
+ app/Controllers/Admin/UserController.php           |    70 [32m+[m
+ app/Controllers/AuthController.php                 |   122 [32m+[m
+ app/Controllers/CommentController.php              |    90 [32m+[m
+ app/Controllers/HomeController.php                 |    28 [32m+[m
+ app/Controllers/LikeController.php                 |    71 [32m+[m
+ app/Controllers/PostController.php                 |   225 [32m+[m
+ app/Controllers/TagController.php                  |    43 [32m+[m
+ app/Controllers/UserController.php                 |    99 [32m+[m
+ app/Middleware/AdminMiddleware.php                 |    18 [32m+[m
+ app/Middleware/AuthMiddleware.php                  |    16 [32m+[m
+ app/Middleware/CsrfMiddleware.php                  |    19 [32m+[m
+ app/Middleware/GuestMiddleware.php                 |    16 [32m+[m
+ app/Model/Comment.php                              |   121 [32m+[m
+ app/Model/LikeComment.php                          |    87 [32m+[m
+ app/Model/LikePost.php                             |    94 [32m+[m
+ app/Model/Post.php                                 |   105 [32m+[m
+ app/Model/PostImageManager.php                     |    90 [32m+[m
+ app/Model/Tag.php                                  |   129 [32m+[m
+ app/Model/User.php                                 |   160 [32m+[m
+ app/Validations/validationRules.php                |    15 [32m+[m
+ app/view/about.view.php                            |     4 [32m+[m
+ app/view/admin/comments/index.view.php             |   117 [32m+[m
+ app/view/admin/dashboard.view.php                  |   102 [32m+[m
+ app/view/admin/likes/index.view.php                |    94 [32m+[m
+ app/view/admin/posts/index.view.php                |    97 [32m+[m
+ app/view/admin/tags/create.view.php                |    97 [32m+[m
+ app/view/admin/tags/index.view.php                 |    87 [32m+[m
+ app/view/admin/users/edit.view.php                 |   135 [32m+[m
+ app/view/admin/users/index.view.php                |   104 [32m+[m
+ app/view/contact.view.php                          |     4 [32m+[m
+ app/view/errors/404.view.php                       |    18 [32m+[m
+ app/view/errors/419.view.php                       |    18 [32m+[m
+ app/view/home.view.php                             |     5 [32m+[m
+ app/view/partials/admin/footer.php                 |   234 [32m+[m
+ app/view/partials/admin/header.php                 |    57 [32m+[m
+ app/view/partials/admin/navbar.php                 |   282 [32m+[m
+ app/view/partials/footer.php                       |     5 [32m+[m
+ app/view/partials/header.php                       |    12 [32m+[m
+ app/view/partials/nav.php                          |   113 [32m+[m
+ app/view/posts/create.view.php                     |    66 [32m+[m
+ app/view/posts/edit.view.php                       |    81 [32m+[m
+ app/view/posts/index.view.php                      |    78 [32m+[m
+ app/view/posts/show.view.php                       |   222 [32m+[m
+ app/view/reservation/index.view.php                |    27 [32m+[m
+ app/view/tags/create.view.php                      |    97 [32m+[m
+ app/view/tags/index.view.php                       |    88 [32m+[m
+ app/view/tags/show.view.php                        |    71 [32m+[m
+ app/view/users/edit.view.php                       |   102 [32m+[m
+ app/view/users/profile.view.php                    |    78 [32m+[m
+ app/view/users/register.view.php                   |   103 [32m+[m
+ app/view/users/sessions/signin.php                 |    68 [32m+[m
+ app/view/users/show_user_posts.view.php            |    69 [32m+[m
+ bootstrap.php                                      |    17 [32m+[m
+ config.php                                         |    29 [32m+[m
+ helpers/functions.php                              |   107 [32m+[m
+ plan.txt                                           |    22 [32m+[m
+ public/assets/admin/css/adminlte.css               | 15593 [32m+++++++++++++++++++[m
+ public/assets/admin/css/adminlte.css.map           |     1 [32m+[m
+ public/assets/admin/css/adminlte.min.css           |     7 [32m+[m
+ public/assets/admin/css/adminlte.min.css.map       |     1 [32m+[m
+ public/assets/admin/css/adminlte.rtl.css           | 15566 [32m++++++++++++++++++[m
+ public/assets/admin/css/adminlte.rtl.css.map       |     1 [32m+[m
+ public/assets/admin/css/adminlte.rtl.min.css       |     7 [32m+[m
+ public/assets/admin/css/adminlte.rtl.min.css.map   |     1 [32m+[m
+ public/assets/admin/img/AdminLTEFullLogo.png       |   Bin [31m0[m -> [32m3009[m bytes
+ public/assets/admin/img/AdminLTELogo.png           |   Bin [31m0[m -> [32m2637[m bytes
+ public/assets/admin/img/avatar.png                 |   Bin [31m0[m -> [32m8118[m bytes
+ public/assets/admin/img/avatar2.png                |   Bin [31m0[m -> [32m8265[m bytes
+ public/assets/admin/img/avatar3.png                |   Bin [31m0[m -> [32m9246[m bytes
+ public/assets/admin/img/avatar4.png                |   Bin [31m0[m -> [32m13543[m bytes
+ public/assets/admin/img/avatar5.png                |   Bin [31m0[m -> [32m7587[m bytes
+ public/assets/admin/img/boxed-bg.jpg               |   Bin [31m0[m -> [32m123766[m bytes
+ public/assets/admin/img/boxed-bg.png               |   Bin [31m0[m -> [32m43676[m bytes
+ .../assets/admin/img/credit/american-express.png   |   Bin [31m0[m -> [32m2162[m bytes
+ public/assets/admin/img/credit/cirrus.png          |   Bin [31m0[m -> [32m1577[m bytes
+ public/assets/admin/img/credit/mastercard.png      |   Bin [31m0[m -> [32m1575[m bytes
+ public/assets/admin/img/credit/paypal.png          |   Bin [31m0[m -> [32m1976[m bytes
+ public/assets/admin/img/credit/paypal2.png         |   Bin [31m0[m -> [32m1219[m bytes
+ public/assets/admin/img/credit/visa.png            |   Bin [31m0[m -> [32m1062[m bytes
+ public/assets/admin/img/default-150x150.png        |   Bin [31m0[m -> [32m339[m bytes
+ public/assets/admin/img/icons.png                  |   Bin [31m0[m -> [32m1139[m bytes
+ public/assets/admin/img/photo1.png                 |   Bin [31m0[m -> [32m662169[m bytes
+ public/assets/admin/img/photo2.png                 |   Bin [31m0[m -> [32m422537[m bytes
+ public/assets/admin/img/photo3.jpg                 |   Bin [31m0[m -> [32m370563[m bytes
+ public/assets/admin/img/photo4.jpg                 |   Bin [31m0[m -> [32m1145510[m bytes
+ public/assets/admin/img/prod-1.jpg                 |   Bin [31m0[m -> [32m45269[m bytes
+ public/assets/admin/img/prod-2.jpg                 |   Bin [31m0[m -> [32m32224[m bytes
+ public/assets/admin/img/prod-3.jpg                 |   Bin [31m0[m -> [32m21025[m bytes
+ public/assets/admin/img/prod-4.jpg                 |   Bin [31m0[m -> [32m26459[m bytes
+ public/assets/admin/img/prod-5.jpg                 |   Bin [31m0[m -> [32m32090[m bytes
+ public/assets/admin/img/user1-128x128.jpg          |   Bin [31m0[m -> [32m2750[m bytes
+ public/assets/admin/img/user2-160x160.jpg          |   Bin [31m0[m -> [32m6905[m bytes
+ public/assets/admin/img/user3-128x128.jpg          |   Bin [31m0[m -> [32m3398[m bytes
+ public/assets/admin/img/user4-128x128.jpg          |   Bin [31m0[m -> [32m3455[m bytes
+ public/assets/admin/img/user5-128x128.jpg          |   Bin [31m0[m -> [32m6415[m bytes
+ public/assets/admin/img/user6-128x128.jpg          |   Bin [31m0[m -> [32m4250[m bytes
+ public/assets/admin/img/user7-128x128.jpg          |   Bin [31m0[m -> [32m6363[m bytes
+ public/assets/admin/img/user8-128x128.jpg          |   Bin [31m0[m -> [32m4983[m bytes
+ public/assets/admin/js/adminlte.js                 |  1174 [32m++[m
+ public/assets/admin/js/adminlte.js.map             |     1 [32m+[m
+ public/assets/admin/js/adminlte.min.js             |     7 [32m+[m
+ public/assets/admin/js/adminlte.min.js.map         |     1 [32m+[m
+ public/assets/img/avatar.jpg                       |   Bin [31m0[m -> [32m34955[m bytes
+ .../uploads/img/avatar/avatar686e2db6bd5ba.webp    |   Bin [31m0[m -> [32m58104[m bytes
+ .../uploads/img/avatar/avatar686e2dbc59d90.webp    |   Bin [31m0[m -> [32m58104[m bytes
+ .../uploads/img/avatar/avatar686e2dc07ef6c.webp    |   Bin [31m0[m -> [32m58104[m bytes
+ .../uploads/img/avatar/avatar686e2dc4be7c4.webp    |   Bin [31m0[m -> [32m58104[m bytes
+ .../uploads/img/avatar/avatar686e2fe3e5af7.png     |   Bin [31m0[m -> [32m27446[m bytes
+ .../uploads/img/avatar/avatar686e2fe93fec5.png     |   Bin [31m0[m -> [32m27446[m bytes
+ .../uploads/img/avatar/avatar686e881e4bcd6.png     |   Bin [31m0[m -> [32m27446[m bytes
+ .../uploads/img/avatar/avatar686f67ddbe575.webp    |   Bin [31m0[m -> [32m58104[m bytes
+ .../uploads/img/avatar/avatar686f9127eca86.png     |   Bin [31m0[m -> [32m654021[m bytes
+ .../uploads/img/avatar/avatar686fa3dd6525e.png     |   Bin [31m0[m -> [32m211349[m bytes
+ .../uploads/img/avatar/avatar686fa4c6a2c03.png     |   Bin [31m0[m -> [32m270121[m bytes
+ .../uploads/img/avatar/avatar6874d8a01237d.png     |   Bin [31m0[m -> [32m173732[m bytes
+ .../uploads/img/posts/image_686e151b8a339.jpg      |   Bin [31m0[m -> [32m200951[m bytes
+ .../uploads/img/posts/image_686e15705f632.jpg      |   Bin [31m0[m -> [32m200951[m bytes
+ .../uploads/img/posts/posts687266ab70467.png       |   Bin [31m0[m -> [32m512649[m bytes
+ .../uploads/img/posts/posts687266ab70547.png       |   Bin [31m0[m -> [32m118955[m bytes
+ .../uploads/img/posts/posts6896355dc5919.jpg       |   Bin [31m0[m -> [32m1030864[m bytes
+ .../uploads/img/posts/posts68963563e972c.jpg       |   Bin [31m0[m -> [32m1030864[m bytes
+ .../uploads/img/posts/posts6896359d59bac.jpg       |   Bin [31m0[m -> [32m1030864[m bytes
+ .../uploads/img/posts/posts689635a16f9d3.jpg       |   Bin [31m0[m -> [32m1030864[m bytes
+ public/fake_user_data.php                          |    12 [32m+[m
+ public/index.php                                   |    33 [32m+[m
+ public/login_data.php                              |     7 [32m+[m
+ routes/routes.php                                  |    72 [32m+[m
+ temp_line_count.txt                                |   Bin [31m0[m -> [32m7478[m bytes
+ 148 files changed, 37830 insertions(+)

@@ -49,6 +49,39 @@ class Follow
         return false; // Row does not exist
     }
 
+    public static function followers($id)
+    {
+        $instantiate = new static();
+        return App::resolve(Database::class)->query("select follower_id from {$instantiate->table} where following_id=:following_id",[
+            'following_id' => $id,
+        ])->fetchAll();
+    }
+
+    public static function following($id)
+    {
+        $instantiate = new static();
+        return App::resolve(Database::class)->query("select following_id from {$instantiate->table} where follower_id=:follower_id",[
+            'follower_id' => $id,
+        ])->fetchAll();
+    }
+
+    public static function follower_count($id)
+    {
+        $instantiate = new static();
+        return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where following_id=:following_id",[
+            'following_id' => $id
+        ])->fetchCol();
+    }
+
+    public static function following_count($id)
+    {
+        $instantiate = new static();
+        return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where follower_id=:follower_id",[
+            'follower_id' => $id
+        ])->fetchCol();
+    }
+
+
 
 
 

@@ -109,6 +109,13 @@ function truncateText($text, $maxLength = 100, $suffix = '...') {
 }
 
 
-function user(){
-    return User::findByUsername($_SESSION['user']);
+function username($id = null){
+    return $id != null ? User::findByUsername($id)  : User::findByUsername($_SESSION['user']);
+}
+
+// hard code
+function user($id = null)
+{
+    return $id != null ? User::find($id)  : User::findByUsername($_SESSION['user']);
+
 }

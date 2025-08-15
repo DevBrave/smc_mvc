@@ -14,7 +14,7 @@ class FollowController
 {
     public function follow($id)
     {
-        $follower_id = user()['id'];
+        $follower_id = username()['id'];
         $followed_id = $id;
 
 
@@ -33,7 +33,7 @@ class FollowController
 
     public function unfollow($id)
     {
-        $follower_id = user()['id'];
+        $follower_id = username()['id'];
         $followed_id = $id;
 
 
