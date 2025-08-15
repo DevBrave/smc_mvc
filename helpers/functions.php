@@ -1,6 +1,8 @@
 <?php
 
 
+use app\Model\User;
+
 function dd($data = null)
 {
     echo '<pre>';
@@ -104,4 +106,9 @@ function truncateText($text, $maxLength = 100, $suffix = '...') {
         return substr($text, 0, $maxLength - strlen($suffix)) . $suffix;
     }
     return $text;
+}
+
+
+function user(){
+    return User::findByUsername($_SESSION['user']);
 }

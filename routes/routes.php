@@ -70,3 +70,7 @@ $router->delete('/comment/{id}','CommentController@destroy')->only(['auth','csrf
 $router->post('/like/store','LikeController@like_post')->only(['auth','csrf']);
 $router->post('/comment/like/store','LikeController@like_comment')->only(['auth','csrf']);
 
+//follow
+$router->post('/user/{id}/follow','FollowController@follow')->only(['auth','csrf']);
+$router->delete('/user/{id}/unfollow','FollowController@unfollow')->only(['auth','csrf']);
+

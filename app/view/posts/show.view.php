@@ -1,11 +1,11 @@
 <?php
 
 use app\Model\Comment;
+use app\Model\Follow;
 use app\Model\LikeComment;
 use app\Model\LikePost;
 use app\Model\Tag;
 use app\Model\User;
-
 layout('header.php');
 $owner = User::find($post['user_id']);
 
@@ -20,8 +20,12 @@ layout('nav.php');
 
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Powered
-                by <?= $owner['username'] ?></h2>
+                by <?= $owner['username'] ?>
+            </h2>
         </div>
+
+
+
         <div class="max-w-3xl mx-auto px-4 py-8">
             <article class="bg-white shadow-xl rounded-2xl p-6 space-y-4">
                     <?php foreach ($images as $img): ?>
@@ -42,7 +46,7 @@ layout('nav.php');
                 <p class="leading-relaxed">
                     <?php foreach ($tags as $tag):  ?>
                         <a href="/tag/<?=Tag::findById($tag['tag_id'])['slug']  ?>" class="text-blue-500">
-                            <?= '#'.Tag::findById($tag['tag_id'])['name']  ?>
+                            <?= '#'.Tag::findById($tag['tag_id'])['slug']  ?>
                         </a>
 
                     <?php endforeach;  ?>
@@ -74,6 +78,25 @@ layout('nav.php');
                             </button>
                         </form>
                     <?php endif; ?>
+                    <?php if ($user['id'] != $owner['id'] and !Follow::has_followed($user['id'],$owner['id'])):  ?>
+                        <form action="/user/<?= $owner['id']  ?>/follow" method="POST">
+                            <?= csrf_input() ?>
+                            <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
+                                    type="submit">
+                                Follow
+                            </button>
+                        </form>
+                    <?php elseif(Follow::has_followed($user['id'],$owner['id'])): ?>
+
+                        <form action="/user/<?= $owner['id']  ?>/unfollow" method="POST">
+                            <?= csrf_input() ?>
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
+                                    type="submit">
+                                Unfollow
+                            </button>
+                        </form>
+                    <?php endif;  ?>
                 </div>
 
                 <!-- This is the comment section -->
