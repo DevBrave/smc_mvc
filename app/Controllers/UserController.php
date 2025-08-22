@@ -53,6 +53,7 @@ class UserController
         $validationFields = [
             'first_name' => $attributes['first_name'],
             'last_name' => $attributes['last_name'],
+            'status' => $attributes['status'],
             'bio' => $attributes['bio']
         ];
 

@@ -43,7 +43,8 @@ class User
             last_name = :last_name,
             bio = :bio ,
             role = :role,
-            avatar =:avatar
+            avatar = :avatar,
+            status = :status
             WHERE id = :id";
 
 
@@ -53,6 +54,7 @@ class User
             'last_name' => $attribute['last_name'],
             'bio' => $attribute['bio'],
             'avatar' => $attribute['avatar'],
+            'status' => $attribute['status'],
             'role' => $attribute['role'] ?? 'user',
             'id' => $attribute['id']
         ]);

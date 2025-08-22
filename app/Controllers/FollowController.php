@@ -24,8 +24,23 @@ class FollowController
            redirect(previousurl());
         }
 
+
+
         // if is not -> insert
-        Follow::follow($follower_id,$followed_id);
+
+
+        // check the status of the profile
+
+        if(user($followed_id)['status'] == 'private'){
+
+            Follow::follow($follower_id,$followed_id,'pending');
+            redirect(previousurl());
+        }
+
+
+
+
+        Follow::follow($follower_id,$followed_id,'accepted');
 
 
         redirect(previousurl());

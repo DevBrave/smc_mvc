@@ -6,6 +6,7 @@ use app\Model\LikeComment;
 use app\Model\LikePost;
 use app\Model\Tag;
 use app\Model\User;
+
 layout('header.php');
 $owner = User::find($post['user_id']);
 
@@ -25,14 +26,14 @@ layout('nav.php');
         </div>
 
 
-
         <div class="max-w-3xl mx-auto px-4 py-8">
             <article class="bg-white shadow-xl rounded-2xl p-6 space-y-4">
-                    <?php foreach ($images as $img): ?>
+                <?php foreach ($images as $img): ?>
 
-                        <img style="border:solid 1px indigo" src="/<?= $img['path'] ?>" class="w-full h-64  object-cover rounded-xl"
-                             alt="">
-                    <?php  endforeach; ?>
+                    <img style="border:solid 1px indigo" src="/<?= $img['path'] ?>"
+                         class="w-full h-64  object-cover rounded-xl"
+                         alt="">
+                <?php endforeach; ?>
                 <h1 class="text-3xl font-bold text-gray-900">
                     <?= $post['title'] ?>
                 </h1>
@@ -44,12 +45,12 @@ layout('nav.php');
                     <?= $post['body'] ?>
                 </p>
                 <p class="leading-relaxed">
-                    <?php foreach ($tags as $tag):  ?>
-                        <a href="/tag/<?=Tag::findById($tag['tag_id'])['slug']  ?>" class="text-blue-500">
-                            <?= '#'.Tag::findById($tag['tag_id'])['slug']  ?>
+                    <?php foreach ($tags as $tag): ?>
+                        <a href="/tag/<?= Tag::findById($tag['tag_id'])['slug'] ?>" class="text-blue-500">
+                            <?= '#' . Tag::findById($tag['tag_id'])['slug'] ?>
                         </a>
 
-                    <?php endforeach;  ?>
+                    <?php endforeach; ?>
                 </p>
                 <div class="flex items-center gap-1">
                     <!-- Like Button -->
@@ -78,25 +79,32 @@ layout('nav.php');
                             </button>
                         </form>
                     <?php endif; ?>
-                    <?php if ($user['id'] != $owner['id'] and !Follow::has_followed($user['id'],$owner['id'])):  ?>
-                        <form action="/user/<?= $owner['id']  ?>/follow" method="POST">
+                    <?php if ($user['id'] != $owner['id'] and !Follow::has_followed($user['id'], $owner['id'])): ?>
+                        <form action="/user/<?= $owner['id'] ?>/follow" method="POST">
                             <?= csrf_input() ?>
                             <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
                                     type="submit">
                                 Follow
                             </button>
                         </form>
-                    <?php elseif(Follow::has_followed($user['id'],$owner['id'])): ?>
+                        <?php elseif (Follow::has_followed($user['id'], $owner['id']) and Follow::checkStatus($user['id'], $owner['id']) == 'accepted'): ?>
 
-                        <form action="/user/<?= $owner['id']  ?>/unfollow" method="POST">
-                            <?= csrf_input() ?>
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
-                                    type="submit">
-                                Unfollow
-                            </button>
+
+                            <form action="/user/<?= $owner['id'] ?>/unfollow" method="POST">
+                        <?= csrf_input() ?>
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
+                                type="submit">
+                            Unfollow
+                        </button>
                         </form>
-                    <?php endif;  ?>
+                    <?php else: ?>
+                        <button class="inline-flex rounded bg-gray-300  px-3 py-1.5 text-white text-sm font-semibold"
+                                disabled>
+                            requested ...
+                        </button>
+                    <?php endif; ?>
+
                 </div>
 
                 <!-- This is the comment section -->
