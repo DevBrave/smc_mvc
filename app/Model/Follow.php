@@ -96,6 +96,21 @@ class Follow
         ])->fetch()['status'];
     }
 
+    public static function getFollowState($userId, $ownerId): string
+    {
+        if ($userId === $ownerId) {
+            return 'self';
+        }
+
+        if (!self::has_followed($userId, $ownerId)) {
+            return 'can_follow';
+        }
+
+        return self::checkStatus($userId, $ownerId) === 'accepted'
+            ? 'following'
+            : 'pending';
+    }
+
 
 
 

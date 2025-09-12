@@ -79,31 +79,34 @@ layout('nav.php');
                             </button>
                         </form>
                     <?php endif; ?>
-                    <?php if ($user['id'] != $owner['id'] and !Follow::has_followed($user['id'], $owner['id'])): ?>
-                        <form action="/user/<?= $owner['id'] ?>/follow" method="POST">
-                            <?= csrf_input() ?>
-                            <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
-                                    type="submit">
-                                Follow
-                            </button>
-                        </form>
-                        <?php elseif (Follow::has_followed($user['id'], $owner['id']) and Follow::checkStatus($user['id'], $owner['id']) == 'accepted'): ?>
-
-
+                    <?php
+                    $followButtonState = Follow::getFollowState($user['id'], $owner['id']);
+                    switch($followButtonState):
+                        case 'can_follow': ?>
+                            <form action="/user/<?= $owner['id'] ?>/follow" method="POST">
+                                <?= csrf_input() ?>
+                                <button type="submit"
+                                        class="inline-flex rounded bg-blue-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200">
+                                    Follow
+                                </button>
+                            </form>
+                            <?php break;
+                        case 'following': ?>
                             <form action="/user/<?= $owner['id'] ?>/unfollow" method="POST">
-                        <?= csrf_input() ?>
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button class="inline-flex rounded bg-blue-600  px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200"
-                                type="submit">
-                            Unfollow
-                        </button>
-                        </form>
-                    <?php else: ?>
-                        <button class="inline-flex rounded bg-gray-300  px-3 py-1.5 text-white text-sm font-semibold"
-                                disabled>
-                            requested ...
-                        </button>
-                    <?php endif; ?>
+                                <?= csrf_input() ?>
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit"
+                                        class="inline-flex rounded bg-blue-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200">
+                                    Unfollow
+                                </button>
+                            </form>
+                            <?php break;
+                        case 'pending': ?>
+                            <button disabled
+                                    class="inline-flex rounded bg-gray-300 px-3 py-1.5 text-white text-sm font-semibold">
+                                Requested...
+                            </button>
+                        <?php endswitch; ?>
 
                 </div>
 
