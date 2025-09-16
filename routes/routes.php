@@ -59,8 +59,8 @@ $router->delete('/post/{id}','PostController@destroy')->only(['auth','csrf']);
 
 // tag
 
-$router->get('/tags','TagController@index');
-$router->get('/tag/{slug}','TagController@show');
+$router->get('/admin/tags','TagController@index');
+$router->get('/admin/tag/{slug}','TagController@show');
 
 
 // comment section
@@ -75,4 +75,6 @@ $router->post('/comment/like/store','LikeController@like_comment')->only(['auth'
 //follow
 $router->post('/user/{id}/follow','FollowController@follow')->only(['auth','csrf']);
 $router->delete('/user/{id}/unfollow','FollowController@unfollow')->only(['auth','csrf']);
+
+
 

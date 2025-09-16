@@ -83,7 +83,7 @@ class AuthController
 
         $attributes = Request::all();
 
-        // this is for checking csrf
+        // this is for checking csrf - we have middle ware
 //        if (!Validator::check_csrf($_POST['csrf_token'])) {
 //            dd('here');
 //        }

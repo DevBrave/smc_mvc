@@ -86,7 +86,6 @@ class Router
                 exit;
             }
         }
-
         abort();
     }
 
