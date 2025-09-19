@@ -34,5 +34,5 @@ class Jwt
 
     private static function b64($data) { return rtrim(strtr(base64_encode($data), '+/', '-_'), '='); }
     private static function ub64($data){ return base64_decode(strtr($data, '-_', '+/')); }
-  
+
 }

@@ -86,7 +86,7 @@ class Post
     public static function post_count($user_id)
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where user_id=:user_id",[
+        return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where user_id=:user_id", [
             'user_id' => $user_id
         ])->fetchCol();
     }
@@ -102,4 +102,22 @@ class Post
     {
         return User::find(Post::find($post_id)['user_id'])['username'];
     }
+
+//    public static function search($tag, $limit)
+//    {
+//
+//        $params = [];
+//        $where = 'WHERE 1=1';
+//        if ($tag !== '') {
+//            $where .= ' AND EXISTS (SELECT 1 FROM post_tags pt JOIN tags t ON t.id=pt.tag_id WHERE pt.post_id=p.id AND t.slug=?)';
+//            $params[] = $tag;
+//        }
+//        $sql = "SELECT SQL_CALC_FOUND_ROWS p.* FROM posts p $where ORDER BY p.id DESC LIMIT $limit OFFSET $off";
+//        $stmt = DB::pdo()->prepare($sql);
+//        $stmt->execute($params);
+//        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//        $total = (int)DB::pdo()->query("SELECT FOUND_ROWS()")->fetchColumn();
+//        return [$rows, $total];
+//
+//    }
 }
