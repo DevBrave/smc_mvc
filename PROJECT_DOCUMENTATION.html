@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMC MVC - Social Media Platform Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #2c3e50;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            overflow-x: auto;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .feature-card h4 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .toc {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+        }
+        .project-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .project-info h1 {
+            margin: 0;
+            border: none;
+            font-size: 2.5em;
+        }
+        .project-info p {
+            font-size: 1.2em;
+            margin: 10px 0 0 0;
+        }
+        @media print {
+            body { font-size: 12pt; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="project-info">
+        <h1>SMC MVC</h1>
+        <p>Social Media Platform - Complete Project Documentation</p>
+        <p><strong>Version:</strong> 1.0 | <strong>Author:</strong> DevBrave | <strong>Date:</strong> 2025</p>
+    </div>
+
+    <div class="toc">
+        <h3>📋 Table of Contents</h3>
+        <ul>
+            <li><a href="#overview">Project Overview</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#installation">Installation Guide</a></li>
+            <li><a href="#usage">Usage Instructions</a></li>
+            <li><a href="#api">API Documentation</a></li>
+            <li><a href="#security">Security Measures</a></li>
+            <li><a href="#project-structure">Project Structure</a></li>
+            <li><a href="#technical-details">Technical Details</a></li>
+            <li><a href="#contributing">Contributing</a></li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <section id="overview">
+        <h2>📖 Project Overview</h2>
+        <p><strong>SMC MVC</strong> is a comprehensive social media platform built with PHP implementing a custom MVC architecture. This platform provides a complete social networking experience with modern web development practices.</p>
+        
+        <p>The project demonstrates advanced PHP concepts including:</p>
+        <ul>
+            <li>Custom MVC framework implementation</li>
+            <li>Dependency injection container</li>
+            <li>Middleware system</li>
+            <li>RESTful API with JWT authentication</li>
+            <li>Comprehensive security measures</li>
+            <li>File upload handling</li>
+            <li>Database abstraction layer</li>
+        </ul>
+    </section>
+
+    <section id="features">
+        <h2>🌟 Features</h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>📝 Content Management</h4>
+                <ul>
+                    <li><strong>Posts Creation & Management:</strong> Create, edit, and delete posts with rich content</li>
+                    <li><strong>Image Upload:</strong> Support for multiple image uploads per post</li>
+                    <li><strong>Tagging System:</strong> Organize posts with custom tags for better categorization</li>
+                    <li><strong>Content Validation:</strong> Built-in validation for post titles and content</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>👤 User Management</h4>
+                <ul>
+                    <li><strong>User Registration & Authentication:</strong> Secure user registration and login system</li>
+                    <li><strong>User Profiles:</strong> Customizable user profiles with avatars and bio</li>
+                    <li><strong>User Roles:</strong> Support for regular users and admin roles</li>
+                    <li><strong>Profile Management:</strong> Edit personal information and upload profile pictures</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>🤝 Social Features</h4>
+                <ul>
+                    <li><strong>Follow System:</strong> Follow and unfollow other users</li>
+                    <li><strong>Likes System:</strong> Like posts and comments</li>
+                    <li><strong>Comment System:</strong> Comment on posts with full CRUD operations</li>
+                    <li><strong>Social Feed:</strong> View posts from followed users and discover new content</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>🛡️ Security Features</h4>
+                <ul>
+                    <li><strong>CSRF Protection:</strong> Built-in CSRF token validation</li>
+                    <li><strong>Password Hashing:</strong> Secure password storage using PHP's password_hash()</li>
+                    <li><strong>JWT Authentication:</strong> API authentication using JSON Web Tokens</li>
+                    <li><strong>Input Validation:</strong> Comprehensive input validation and sanitization</li>
+                    <li><strong>Role-based Access Control:</strong> Middleware-based permission system</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>🔧 Administrative Features</h4>
+                <ul>
+                    <li><strong>Admin Dashboard:</strong> Comprehensive admin control panel</li>
+                    <li><strong>User Management:</strong> Admin can manage user accounts and roles</li>
+                    <li><strong>Content Moderation:</strong> Manage posts, comments, and tags</li>
+                    <li><strong>System Statistics:</strong> View platform statistics and analytics</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>🚀 API Support</h4>
+                <ul>
+                    <li><strong>RESTful API:</strong> Complete API endpoints for mobile/frontend applications</li>
+                    <li><strong>API Authentication:</strong> JWT-based API authentication</li>
+                    <li><strong>JSON Responses:</strong> Standardized JSON API responses</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section id="architecture">
+        <h2>🏗️ Architecture</h2>
+        
+        <h3>Custom MVC Framework</h3>
+        <p>This project implements a custom PHP MVC framework with the following components:</p>
+
+        <h4>Core Components</h4>
+        <ul>
+            <li><strong>Router:</strong> Advanced routing with parameter support and middleware</li>
+            <li><strong>Database:</strong> PDO-based database abstraction layer</li>
+            <li><strong>Container:</strong> Dependency injection container</li>
+            <li><strong>Validator:</strong> Comprehensive validation system</li>
+            <li><strong>JWT Handler:</strong> JSON Web Token implementation</li>
+            <li><strong>File Uploader:</strong> Secure file upload handling</li>
+        </ul>
+
+        <h4>Middleware System</h4>
+        <ul>
+            <li><strong>AuthMiddleware:</strong> Authentication protection</li>
+            <li><strong>AdminMiddleware:</strong> Admin role protection</li>
+            <li><strong>GuestMiddleware:</strong> Guest-only access</li>
+            <li><strong>CsrfMiddleware:</strong> CSRF token validation</li>
+            <li><strong>JwtMiddleware:</strong> JWT token validation for API</li>
+        </ul>
+
+        <h4>Models</h4>
+        <ul>
+            <li><strong>User Model:</strong> User management and authentication</li>
+            <li><strong>Post Model:</strong> Post creation and management</li>
+            <li><strong>Comment Model:</strong> Comment system</li>
+            <li><strong>Tag Model:</strong> Tagging system</li>
+            <li><strong>Follow Model:</strong> Social following system</li>
+            <li><strong>Like Models:</strong> Like functionality for posts and comments</li>
+        </ul>
+    </section>
+
+    <section id="installation">
+        <h2>🚀 Installation Guide</h2>
+
+        <h3>📋 Requirements</h3>
+        <ul>
+            <li>PHP 7.4 or higher</li>
+            <li>MySQL 5.7 or higher</li>
+            <li>Apache/Nginx web server</li>
+            <li>Composer (for autoloading)</li>
+            <li>GD extension (for image processing)</li>
+        </ul>
+
+        <h3>Installation Steps</h3>
+
+        <h4>1. Clone the Repository</h4>
+        <pre><code>git clone &lt;repository-url&gt;
+cd smc_mvc</code></pre>
+
+        <h4>2. Install Dependencies</h4>
+        <pre><code>composer install</code></pre>
+
+        <h4>3. Database Setup</h4>
+        <ol>
+            <li>Create a new MySQL database named <code>small_social</code></li>
+            <li>Import the database schema (SQL file should be provided)</li>
+            <li>Update database credentials in <code>config.php</code></li>
+        </ol>
+
+        <h4>4. Configuration</h4>
+        <p>Update the database configuration in <code>config.php</code>:</p>
+        <pre><code>'database' => [
+    'host' => 'localhost',
+    'dbname' => 'small_social',
+    'charset' => 'utf8mb4',
+    'username' => 'your_username',
+    'password' => 'your_password'
+]</code></pre>
+
+        <h4>5. File Permissions</h4>
+        <p>Ensure the following directories are writable:</p>
+        <pre><code>chmod 755 public/assets/uploads/
+chmod 755 app/view/</code></pre>
+
+        <h4>6. Web Server Configuration</h4>
+        
+        <h5>Apache (.htaccess)</h5>
+        <pre><code>RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [QSA,L]</code></pre>
+
+        <h5>Nginx</h5>
+        <pre><code>location / {
+    try_files $uri $uri/ /public/index.php?$query_string;
+}</code></pre>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section id="usage">
+        <h2>📖 Usage Instructions</h2>
+
+        <h3>User Registration</h3>
+        <ol>
+            <li>Navigate to <code>/register</code></li>
+            <li>Fill in the registration form</li>
+            <li>Upload a profile picture (optional)</li>
+            <li>Submit to create account</li>
+        </ol>
+
+        <h3>Creating Posts</h3>
+        <ol>
+            <li>Log in to your account</li>
+            <li>Navigate to <code>/post/create</code></li>
+            <li>Write your post content</li>
+            <li>Add images (optional)</li>
+            <li>Select relevant tags</li>
+            <li>Publish your post</li>
+        </ol>
+
+        <h3>Admin Access</h3>
+        <ol>
+            <li>Ensure your user account has admin role in database</li>
+            <li>Navigate to <code>/admin</code></li>
+            <li>Access admin dashboard with full management capabilities</li>
+        </ol>
+    </section>
+
+    <section id="api">
+        <h2>🛠️ API Documentation</h2>
+
+        <h3>Authentication Endpoints</h3>
+        <pre><code>POST /api/v1/auth/register - Register new user
+POST /api/v1/auth/login - User login
+DELETE /api/v1/auth/logout - User logout</code></pre>
+
+        <h3>Post Endpoints</h3>
+        <pre><code>GET /api/v1/posts - Get all posts
+POST /api/v1/posts - Create new post (requires JWT)</code></pre>
+
+        <h3>Authentication</h3>
+        <p>For API requests requiring authentication, include JWT token in header:</p>
+        <pre><code>Authorization: Bearer &lt;your-jwt-token&gt;</code></pre>
+
+        <h3>Frontend Features</h3>
+        <ul>
+            <li>Responsive design for mobile and desktop</li>
+            <li>Clean and intuitive user interface</li>
+            <li>Real-time form validation</li>
+            <li>Image preview before upload</li>
+            <li>CSRF protection on all forms</li>
+        </ul>
+    </section>
+
+    <section id="security">
+        <h2>🔒 Security Measures</h2>
+        <ol>
+            <li><strong>Password Security:</strong> All passwords are hashed using PHP's <code>password_hash()</code></li>
+            <li><strong>CSRF Protection:</strong> All state-changing operations are protected with CSRF tokens</li>
+            <li><strong>Input Validation:</strong> All user inputs are validated and sanitized</li>
+            <li><strong>SQL Injection Prevention:</strong> Using prepared statements with PDO</li>
+            <li><strong>File Upload Security:</strong> Strict file type and size validation</li>
+            <li><strong>Session Management:</strong> Secure session handling</li>
+        </ol>
+    </section>
+
+    <section id="project-structure">
+        <h2>📁 Project Structure</h2>
+        <pre><code>smc_mvc/
+├── Core/                 # Custom MVC framework core
+│   ├── App.php          # Application container
+│   ├── Router.php       # Routing system
+│   ├── Database.php     # Database abstraction
+│   ├── Validator.php    # Validation system
+│   └── ...
+├── app/                 # Application logic
+│   ├── Controllers/     # Controller classes
+│   ├── Model/          # Model classes
+│   ├── Middleware/     # Middleware classes
+│   ├── view/           # View templates
+│   └── Validations/    # Validation rules
+├── routes/             # Route definitions
+├── public/             # Public assets and entry point
+├── helpers/            # Helper functions
+└── config.php          # Configuration file</code></pre>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section id="technical-details">
+        <h2>⚙️ Technical Implementation Details</h2>
+
+        <h3>Database Schema</h3>
+        <p>The application uses MySQL database with the following main tables:</p>
+        <ul>
+            <li><strong>users:</strong> User account information</li>
+            <li><strong>posts:</strong> User posts and content</li>
+            <li><strong>comments:</strong> Post comments</li>
+            <li><strong>tags:</strong> Content tags</li>
+            <li><strong>follows:</strong> User following relationships</li>
+            <li><strong>likes:</strong> Post and comment likes</li>
+            <li><strong>post_images:</strong> Post image attachments</li>
+            <li><strong>post_tag:</strong> Many-to-many relationship between posts and tags</li>
+        </ul>
+
+        <h3>Routing System</h3>
+        <p>The custom router supports:</p>
+        <ul>
+            <li>Dynamic route parameters (e.g., <code>/user/{username}</code>)</li>
+            <li>Multiple HTTP methods (GET, POST, PUT, PATCH, DELETE)</li>
+            <li>Middleware application per route</li>
+            <li>Namespace resolution for controllers</li>
+        </ul>
+
+        <h3>Validation System</h3>
+        <p>Built-in validation rules include:</p>
+        <ul>
+            <li><code>required</code> - Field must be present</li>
+            <li><code>min:n</code> - Minimum length validation</li>
+            <li><code>max:n</code> - Maximum length validation</li>
+            <li><code>email</code> - Email format validation</li>
+            <li>Custom validation rules can be added</li>
+        </ul>
+
+        <h3>File Upload System</h3>
+        <p>Secure file upload implementation with:</p>
+        <ul>
+            <li>File type validation</li>
+            <li>File size limits</li>
+            <li>Unique filename generation</li>
+            <li>Directory organization</li>
+        </ul>
+    </section>
+
+    <section id="contributing">
+        <h2>🤝 Contributing & Development</h2>
+
+        <h3>Contributing Guidelines</h3>
+        <ol>
+            <li>Fork the repository</li>
+            <li>Create a feature branch (<code>git checkout -b feature/amazing-feature</code>)</li>
+            <li>Commit your changes (<code>git commit -m 'Add amazing feature'</code>)</li>
+            <li>Push to the branch (<code>git push origin feature/amazing-feature</code>)</li>
+            <li>Open a Pull Request</li>
+        </ol>
+
+        <h3>Development Setup</h3>
+        <p>For local development:</p>
+        <ol>
+            <li>Set up a local web server (XAMPP, WAMP, or Laravel Valet)</li>
+            <li>Configure virtual hosts to point to the project directory</li>
+            <li>Enable PHP error reporting for development</li>
+            <li>Use a MySQL client for database management</li>
+        </ol>
+
+        <h3>Testing</h3>
+        <p>The project would benefit from:</p>
+        <ul>
+            <li>Unit tests for models and core components</li>
+            <li>Integration tests for API endpoints</li>
+            <li>Feature tests for user interactions</li>
+            <li>Security testing for vulnerabilities</li>
+        </ul>
+    </section>
+
+    <div class="page-break"></div>
+
+    <section>
+        <h2>📄 License & Credits</h2>
+        <p>This project is open source and available under the MIT License.</p>
+        
+        <h3>👨‍💻 Author</h3>
+        <p><strong>DevBrave</strong> - <em>Initial work and development</em></p>
+        
+        <h3>🙏 Acknowledgments</h3>
+        <ul>
+            <li>Thanks to the PHP community for excellent documentation</li>
+            <li>Inspiration from modern MVC frameworks like Laravel and CodeIgniter</li>
+            <li>Contributors who helped improve this project</li>
+        </ul>
+
+        <hr style="margin: 40px 0;">
+        
+        <footer style="text-align: center; color: #666; font-style: italic;">
+            <p>SMC MVC - Social Media Platform | Complete Project Documentation</p>
+            <p>Generated on: 2025 | Version 1.0</p>
+            <p>For more information, please contact the development team or create an issue on GitHub.</p>
+        </footer>
+    </section>
+
+</body>
+</html>
