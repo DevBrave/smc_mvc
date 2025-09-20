@@ -1,11 +1,13 @@
 <?php
 
 
-use app\Model\Comment;
-use app\Model\Post;
-use app\Model\PostImageManager;
-use app\Model\Tag;
-use app\Model\User;
+namespace App\Controllers;
+
+use App\Model\Comment;
+use App\Model\Post;
+use App\Model\PostImageManager;
+use App\Model\Tag;
+use App\Model\User;
 use Core\App;
 use Core\Config;
 use Core\Database;

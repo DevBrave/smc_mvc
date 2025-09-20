@@ -1,7 +1,6 @@
 <?php
 
-use app\Model\Tag;
-use app\Model\User;
+use App\Model\Tag;
 
 layout('header.php');
 $selectedIds = array_column($tags, 'tag_id');

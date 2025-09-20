@@ -1,8 +1,5 @@
 <?php
 
-use app\Model\Comment;
-use app\Model\LikePost;
-use app\Model\User;
 
 layout('header.php');
 ?>

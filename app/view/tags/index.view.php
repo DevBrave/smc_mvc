@@ -1,9 +1,12 @@
-<?php use app\Model\Post;
-use app\Model\Tag;
-use app\Model\User;
+<?php
 
-layout('admin/header.php'); ?>
-<?php layout('admin/navbar.php'); ?>
+
+use App\Model\Tag;
+
+layout('admin/header.php');
+layout('admin/navbar.php');
+
+?>
 <!--begin::App Main-->
 <main class="app-main">
     <!--begin::App Content Header-->

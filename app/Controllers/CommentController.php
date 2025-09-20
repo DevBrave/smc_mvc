@@ -1,11 +1,10 @@
 <?php
 
+namespace App\Controllers;
 
-use app\Model\Comment;
-use app\Model\Post;
-use app\Model\User;
-use Core\App;
-use Core\Database;
+
+use App\Model\Comment;
+use App\Model\Post;
 use Core\Request;
 use Core\Validator;
 

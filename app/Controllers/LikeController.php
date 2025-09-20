@@ -1,15 +1,16 @@
 <?php
 
 
-use app\Model\Comment;
-use app\Model\LikeComment;
-use app\Model\LikePost;
-use app\Model\Post;
-use app\Model\User;
-use Core\App;
-use Core\Database;
+namespace App\Controllers;
+
+
+
+use App\Model\Comment;
+use App\Model\LikeComment;
+use App\Model\LikePost;
+use App\Model\Post;
+use App\Model\User;
 use Core\Request;
-use Core\Validator;
 
 class LikeController
 {

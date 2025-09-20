@@ -1,6 +1,6 @@
 <?php
 
-use app\Model\User;
+use App\Model\User;
 
 layout('header.php');
 $user = User::findByUsername($_SESSION['user'], 'id');

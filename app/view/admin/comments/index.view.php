@@ -1,6 +1,6 @@
-<?php use app\Model\Comment;
-use app\Model\Post;
-use app\Model\User;
+<?php
+
+use app\Model\Comment;
 
 layout('admin/header.php'); ?>
 <?php layout('admin/navbar.php'); ?>

@@ -1,5 +1,4 @@
-<?php use app\Model\Post;
-use app\Model\User;
+<?php
 
 layout('admin/header.php'); ?>
 <?php layout('admin/navbar.php'); ?>

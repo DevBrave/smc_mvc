@@ -4,46 +4,56 @@ use Core\App;
 use Core\Database;
 use Core\Router;
 
+const BASE_PATH = __DIR__ . '/../';
+//var_dump(BASE_PATH);
+//exit();
+
+require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer
+
+
 session_start();
-define("BASE_PATH", $_SERVER['DOCUMENT_ROOT']);
-require('../helpers/functions.php');
 
 
-spl_autoload_register(function ($class){
-    // Define namespace to directory mappings
-    $namespaceMap = [
-        'Api\\' => 'app/Controllers/Api/',
-        'Admin\\' => 'app/Controllers/Admin/',
-        'Core\\' => 'Core/',
-        'app\\' => '',
-    ];
-    
-    // Check each namespace mapping
-    foreach ($namespaceMap as $namespace => $directory) {
-        if (strpos($class, $namespace) === 0) {
-            $className = str_replace($namespace, '', $class);
-            $file = base_path($directory . $className . '.php');
-            if (file_exists($file)) {
-                require $file;
-                return;
-            }
-        }
-    }
-    
-    // Fallback: try as regular controller
-    $file = base_path('app/Controllers/' . $class . '.php');
-    if (file_exists($file)) {
-        require $file;
-        return;
-    }
-    
-    // Final fallback: original behavior
-    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-    $fallbackFile = base_path($classPath . '.php');
-    if (file_exists($fallbackFile)) {
-        require $fallbackFile;
-    }
-});
+require(BASE_PATH . 'helpers/functions.php');
+
+// autoload with php pure
+//spl_autoload_register(function ($class){
+//    // Define namespace to directory mappings
+//    $namespaceMap = [
+//        'Api\\' => 'app/Controllers/Api/',
+//        'Admin\\' => 'app/Controllers/Admin/',
+//        'Core\\' => 'Core/',
+//        'app\\' => '',
+//    ];
+//
+//    // Check each namespace mapping
+//    foreach ($namespaceMap as $namespace => $directory) {
+//        if (strpos($class, $namespace) === 0) {
+//            $className = str_replace($namespace, '', $class);
+//            $file = base_path($directory . $className . '.php');
+//            if (file_exists($file)) {
+//                require $file;
+//                return;
+//            }
+//        }
+//    }
+//
+//    // Fallback: try as regular controller
+//    $file = base_path('app/Controllers/' . $class . '.php');
+//    if (file_exists($file)) {
+//        require $file;
+//        return;
+//    }
+//
+//    // Final fallback: original behavior
+//    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+//    $fallbackFile = base_path($classPath . '.php');
+//    if (file_exists($fallbackFile)) {
+//        require $fallbackFile;
+//    }
+//}); //
+
+
 
 $router = new Router();
 

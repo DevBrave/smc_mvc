@@ -1,6 +1,8 @@
 <?php
 
 namespace Core;
+use App\Controllers\HomeController;
+
 class Router
 {
 
@@ -77,12 +79,12 @@ class Router
 
                     }
                 }
-                require controller_path($class);
-
-                $controller = new $class;
+                
+                // Resolve the full namespaced class name
+                $fullClassName = $this->resolveControllerClass($class);
                 // Call method with matched parameters
-
-                call_user_func_array([$controller, $controllerMethod], $matches);
+                $controllerInstance = new $fullClassName();
+                call_user_func_array([$controllerInstance, $controllerMethod], $matches);
                 exit;
             }
         }
@@ -94,6 +96,18 @@ class Router
         $lastIndex = array_key_last($this->routes);
         $this->routes[$lastIndex]['middleware'] = $middleware;
         return $this;
+    }
+    
+    private function resolveControllerClass($class)
+    {
+        // Handle different namespace patterns
+        if (strpos($class, '\\') !== false) {
+            // Already contains namespace separators (e.g., "Admin\\UserController")
+            return 'App\\Controllers\\' . $class;
+        } else {
+            // Simple class name (e.g., "HomeController")
+            return 'App\\Controllers\\' . $class;
+        }
     }
 
 

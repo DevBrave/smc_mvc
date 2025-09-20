@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Admin;
+namespace App\Controllers\Admin;
 
-use app\Model\User;
+use App\Model\User;
 
 class AdminController
 {

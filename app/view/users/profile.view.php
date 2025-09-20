@@ -1,6 +1,5 @@
 <?php
 
-use Core\Router;
 
 
 layout('header.php');

@@ -20,6 +20,7 @@ return [
         'guest' => GuestMiddleware::class,
         'csrf' => CsrfMiddleware::class,
         'admin' => \App\Middleware\AdminMiddleware::class,
+        'jwt' => \App\Middleware\JwtMiddleware::class,
     ]
 
 ];
