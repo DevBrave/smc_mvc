@@ -1,0 +1,12 @@
+{
+    "name": "devbrave/smc_mvc",
+    "description": "small social media with mvc architecture",
+    "type": "self-project",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Core\\" : "Core/",
+            "App\\": "app/"
+        }
+    }
+}

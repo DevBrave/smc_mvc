@@ -1,11 +1,11 @@
 <?php
 
-use app\Model\Comment;
-use app\Model\Follow;
-use app\Model\LikeComment;
-use app\Model\LikePost;
-use app\Model\Tag;
-use app\Model\User;
+use App\Model\Comment;
+use App\Model\Follow;
+use App\Model\LikeComment;
+use App\Model\LikePost;
+use App\Model\Tag;
+use App\Model\User;
 
 layout('header.php');
 $owner = User::find($post['user_id']);

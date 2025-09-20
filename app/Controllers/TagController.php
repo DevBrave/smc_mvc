@@ -1,10 +1,10 @@
 <?php
 
 
-use app\Model\Comment;
-use app\Model\Tag;
-use app\Model\User;
-use Core\Request;
+namespace App\Controllers;
+
+
+use App\Model\Tag;
 
 class TagController
 {

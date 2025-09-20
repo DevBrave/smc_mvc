@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Api;
+namespace App\Controllers\Api;
 
-use app\Model\User;
+use App\Model\User;
 use Core\Jwt;
-use Core\Validator;
 
 class AuthController extends ApiController
 {

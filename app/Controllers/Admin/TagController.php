@@ -1,11 +1,9 @@
 <?php
 
 
-namespace Admin;
+namespace App\Controllers\Admin;
 
-use app\Model\Comment;
-use app\Model\Tag;
-use app\Model\User;
+use App\Model\Tag;
 use Core\Request;
 
 class TagController

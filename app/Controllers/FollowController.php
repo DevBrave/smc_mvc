@@ -1,14 +1,8 @@
 <?php
 
+namespace App\Controllers;
 
-use app\Model\Follow;
-use app\Model\User;
-use Core\App;
-use Core\Config;
-use Core\Database;
-use Core\FileUploader;
-use Core\Request;
-use Core\Validator;
+use App\Model\Follow;
 
 class FollowController
 {

@@ -1,10 +1,9 @@
 <?php
 
 
-use app\Model\User;
-use Core\App;
-use Core\Config;
-use Core\Database;
+namespace App\Controllers;
+
+use App\Model\User;
 use Core\FileUploader;
 use Core\Request;
 use Core\Validator;

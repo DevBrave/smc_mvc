@@ -1,12 +1,10 @@
 <?php
 
 
-namespace Admin;
+namespace App\Controllers\Admin;
 
-use app\Model\Comment;
-use app\Model\Post;
+use App\Model\Comment;
 use Core\Request;
-use Core\Validator;
 
 class CommentController
 {

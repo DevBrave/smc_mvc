@@ -1,7 +1,7 @@
 <?php
 
 
-use app\Model\User;
+use App\Model\User;
 
 function dd($data = null)
 {
@@ -13,13 +13,13 @@ function dd($data = null)
 
 function base_path($path)
 {
-    return BASE_PATH . "/../$path";
+    return BASE_PATH . "$path";
 }
 
 
 function controller_path($path)
 {
-    return base_path('/app/Controllers/' . $path . '.php');
+    return base_path('app/Controllers/' . $path);
 }
 
 function view($path, $param = [])

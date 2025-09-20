@@ -1,10 +1,11 @@
-<?php use app\Model\Comment;
-use app\Model\LikePost;
-use app\Model\Post;
-use app\Model\User;
+<?php
 
-layout('admin/header.php'); ?>
-<?php layout('admin/navbar.php'); ?>
+use App\Model\Comment;
+use App\Model\LikePost;
+use App\Model\User;
+
+layout('admin/header.php');
+layout('admin/navbar.php'); ?>
 <main class="app-main">
     <!--begin::App Content Header-->
     <div class="app-content-header">

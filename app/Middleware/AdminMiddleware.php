@@ -3,7 +3,7 @@
 namespace App\Middleware;
 
 use App\Contract\MiddlewareInterface;
-use app\Model\User;
+use App\Model\User;
 
 class AdminMiddleware implements MiddlewareInterface
 {

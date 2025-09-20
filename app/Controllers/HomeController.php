@@ -1,7 +1,7 @@
 <?php
 
 
-use Core\Validator;
+namespace App\Controllers;
 
 class HomeController
 {

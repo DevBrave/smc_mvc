@@ -1,6 +1,6 @@
 <?php
 
-namespace Api;
+namespace App\Controllers\Api;
 
 
 class SystemController

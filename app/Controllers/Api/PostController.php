@@ -1,12 +1,11 @@
 <?php
 
 
-namespace Api;
 
-use app\Model\Post;
-use app\Model\User;
-use Core\Jwt;
-use Core\Validator;
+
+namespace App\Controllers\Api;
+
+use App\Model\Post;
 
 class PostController extends ApiController
 {

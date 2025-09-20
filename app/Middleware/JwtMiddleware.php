@@ -3,7 +3,6 @@
 namespace App\Middleware;
 
 use App\Contract\MiddlewareInterface;
-use app\Model\User;
 use Core\Jwt;
 
 class JwtMiddleware implements MiddlewareInterface

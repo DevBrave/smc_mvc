@@ -1,6 +1,6 @@
 <?php
 
-use app\Model\User;
+use App\Model\User;
 ?>
 <nav class="bg-gray-800">
     <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -82,7 +82,7 @@ use app\Model\User;
                 <?php if ($_SESSION['user'] ?? false): ?>
                     <div class="relative ml-3">
                         <a class="button text-base/3 px-3 py-2 text-sm text-white"
-                           href="/user/<?= ((User::findByUsername($_SESSION['user']))['username'])  ?>">Your Account</a>
+                           href="/user/<?= ((User::findByUsername($_SESSION['user']))['username']) ?>">Your Account</a>
                     </div>
                     <?php if (User::isAdmin($_SESSION['user'])): ?>
                         <div class="relative ml-3">
