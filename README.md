@@ -219,20 +219,4 @@ smc_mvc/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👨‍💻 Author
-
-**DevBrave** - *Initial work*
-
-## 🙏 Acknowledgments
-
-- Thanks to the PHP community for excellent documentation
-- Inspiration from modern MVC frameworks like Laravel and CodeIgniter
-- Contributors who helped improve this project
-
----
-
-*For more information, please contact the development team or create an issue on GitHub.*
