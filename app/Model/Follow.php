@@ -53,10 +53,10 @@ class Follow
     public static function followers($id)
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select follower_id from {$instantiate->table} where following_id=:following_id  and status=:status",[
+        return array_column(App::resolve(Database::class)->query("select follower_id from {$instantiate->table} where following_id=:following_id  and status=:status",[
             'following_id' => $id,
             'status' => 'accepted',
-        ])->fetchAll();
+        ])->fetchAll(),'follower_id');
     }
 
     public static function following($id)

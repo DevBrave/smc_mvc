@@ -23,6 +23,7 @@ class LikePost
 
         if (LikePost::hasLiked($attribute['post_id'], $attribute['user_id'])) {
             LikePost::remove(LikePost::find($attribute['post_id'], $attribute['user_id']));
+            return false;
 
         } else {
             $query = "insert into  {$instantiate->table} (user_id,post_id)
@@ -31,6 +32,8 @@ class LikePost
                 'user_id' => $attribute['user_id'],
                 'post_id' => $attribute['post_id'],
             ]);
+
+            return true;
 
         }
 

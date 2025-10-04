@@ -4,6 +4,9 @@
 namespace App\Controllers;
 
 use App\Model\Comment;
+use App\Model\Follow;
+use App\Model\Notification;
+use App\Model\NotificationRecipient;
 use App\Model\Post;
 use App\Model\PostImageManager;
 use App\Model\Tag;
@@ -47,7 +50,7 @@ class PostController
     public function create()
     {
         $tags = Tag::all();
-        view('posts/create.view.php',[
+        view('posts/create.view.php', [
             'tags' => $tags
         ]);
     }
@@ -56,7 +59,6 @@ class PostController
     public function store()
     {
         $attributes = Request::all();
-
 
         Validator::validate([
             'title' => $attributes['title'],
@@ -67,11 +69,10 @@ class PostController
         ]);
 
 
-        if (empty($attributes['tags'])){
+        if (empty($attributes['tags'])) {
             $_SESSION['flash_errors']['tag'] = 'Please select at least one tag';
             redirect(previousurl());
         }
-
 
 
         $hasNewImage = false;
@@ -81,18 +82,27 @@ class PostController
         }
         $post_id = Post::create($attributes);
 
-        if ($hasNewImage){
-        $paths = PostImageManager::uploadImages($attributes['images']);
+        $followers = Follow::followers(\user()['id']);
+
+        // check that if the user has at least one follower
+        if (count($followers) != 0) {
+
+            $notif_id = Notification::create(\user()['id'], 'post_created', 'post', $post_id);
+            // notify just one user which is the owner of comment
+            NotificationRecipient::notify($notif_id, $followers);
+        }
+        if ($hasNewImage) {
+            $paths = PostImageManager::uploadImages($attributes['images']);
             PostImageManager::attachImages([
                 'post_id' => $post_id,
                 'images' => $paths,
             ]);
         }
-        Tag::attach_tags($attributes['tags'],$post_id);
+        Tag::attach_tags($attributes['tags'], $post_id);
 
         unset($_SESSION['flash_errors']);
 
-        redirect('/post/'.$post_id);
+        redirect('/post/' . $post_id);
 
     }
 
@@ -116,8 +126,7 @@ class PostController
     {
         $post = Post::find($id);
         $images = (PostImageManager::getImageByPostId($post['id'])) ?? null;
-        $tags = Tag::tag_associated($post['id'],'tag_id');
-
+        $tags = Tag::tag_associated($post['id'], 'tag_id');
 
 
         view('posts/edit.view.php', [
@@ -151,7 +160,7 @@ class PostController
             'body' => 'required|max:10000',
         ]);
 
-        if (empty($attributes['tags'])){
+        if (empty($attributes['tags'])) {
             $_SESSION['flash_errors']['tag'] = 'Please select at least one tag';
             redirect(previousurl());
         }
@@ -184,26 +193,24 @@ class PostController
         }
 
 
-
         $newTagsId = $attributes['tags'];
 
 
-        $associatedCurrentTag = App::resolve(Database::class)->query('select * from post_tag where post_id=:post_id',[
-          'post_id' => $post_id
+        $associatedCurrentTag = App::resolve(Database::class)->query('select * from post_tag where post_id=:post_id', [
+            'post_id' => $post_id
         ])->fetchAll();
 
         $currentTagId = array_column($associatedCurrentTag, 'tag_id');
 
 
-
         $tagsToRemove = array_diff($currentTagId, $newTagsId);
-        $tagsToAdd    = array_diff($newTagsId, $currentTagId);
+        $tagsToAdd = array_diff($newTagsId, $currentTagId);
 
         if ($tagsToRemove) {
             $in = implode(',', array_fill(0, count($tagsToRemove), '?'));
             $params = array_merge([$post_id], $tagsToRemove);
 
-            App::resolve(Database::class)->query("delete from post_tag where post_id = ? and tag_id in ($in)",$params);
+            App::resolve(Database::class)->query("delete from post_tag where post_id = ? and tag_id in ($in)", $params);
         }
 
 
@@ -212,7 +219,7 @@ class PostController
                 $params = [$post_id, $tagId];
             }
 
-           App::resolve(Database::class)->query("insert into  post_tag (post_id, tag_id) VALUES (?, ?)",$params);
+            App::resolve(Database::class)->query("insert into  post_tag (post_id, tag_id) VALUES (?, ?)", $params);
 
         }
 

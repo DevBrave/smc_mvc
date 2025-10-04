@@ -104,8 +104,7 @@ class UserController
     public function followers($username)
     {
 
-        $followers = Follow::followers(\username($username)['id']);
-        $ids = array_column($followers,'follower_id');
+        $ids = Follow::followers(\username($username)['id']);
 
         view('users/show_followers.view.php', [
             'follows' => $ids,

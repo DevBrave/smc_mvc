@@ -69,6 +69,8 @@ class Router
             if (preg_match($pattern, $uri, $matches) && $route['method'] === strtoupper($method)) {
                 array_shift($matches); // First match is the full URI, remove it
                 list($class, $controllerMethod) = explode('@', $route['controller']);
+
+                // middleware checking
                 $middleware = (require(base_path('config.php')))['middleware'];
                 foreach ($middleware as $key => $mdl) {
                     if ((is_array($route['middleware']) && in_array($key, $route['middleware']))
@@ -79,7 +81,8 @@ class Router
 
                     }
                 }
-                
+
+
                 // Resolve the full namespaced class name
                 $fullClassName = $this->resolveControllerClass($class);
                 // Call method with matched parameters

@@ -22,7 +22,7 @@ class LikeComment
 
         if (LikeComment::hasLiked($attribute['comment_id'], $attribute['user_id'])) {
             LikeComment::remove($attribute);
-
+            return false;
         } else {
             $query = "insert into  {$instantiate->table} (user_id,comment_id)
             values(:user_id,:comment_id)";
@@ -30,7 +30,7 @@ class LikeComment
                 'user_id' => $attribute['user_id'],
                 'comment_id' => $attribute['comment_id'],
             ]);
-
+            return true;
         }
 
 

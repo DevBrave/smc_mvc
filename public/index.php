@@ -1,7 +1,6 @@
 <?php
 
-use Core\App;
-use Core\Database;
+
 use Core\Router;
 
 const BASE_PATH = __DIR__ . '/../';
@@ -68,6 +67,10 @@ require(base_path('bootstrap.php'));
 
 $current_url = $_SERVER['REQUEST_URI'];
 $method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
+
+
+//dd($router->all_routes()); // all the routes we added from the routes and api file
+
 $router->routes($current_url,$method);
 
 

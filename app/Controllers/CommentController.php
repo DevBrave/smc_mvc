@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 
 use App\Model\Comment;
+use App\Model\Notification;
+use App\Model\NotificationRecipient;
 use App\Model\Post;
 use Core\Request;
 use Core\Validator;
@@ -19,7 +21,7 @@ class CommentController
 //        if (!Validator::check_csrf($attributes['csrf_token'])) {
 //            dd('here');
 //        }
-        if ($attributes['user_id'] == null ){
+        if ($attributes['user_id'] == null) {
             $_SESSION['flash_errors']['not_logged_in'] = 'You should log in';
             redirect(previousurl());
         }
@@ -27,11 +29,24 @@ class CommentController
 
         Validator::validate([
             'body' => $attributes['body'],
-        ],[
+        ], [
             'body' => 'required|max:500',
         ]);
 
         Comment::create($attributes);
+
+        $context_id = null;
+
+        if (!is_null($comment_owner['parent_id'])) {
+            $context_id = $comment_owner['parent_id'];
+        }
+
+        $notif_id = Notification::create(\user()['id'], 'comment_post', 'comment', $attributes['comment_id'], $context_id);
+
+        // notify just one user which is the owner of comment
+        NotificationRecipient::notify($notif_id, $comment_owner['user_id']);
+
+
         unset($_SESSION['flash_errors']);
         redirect(previousurl());
 
@@ -81,8 +96,8 @@ class CommentController
             redirect(previousurl());
         }
 
-            Post::update($attributes);
-            redirect("/post/{$attributes['post_id']}");
+        Post::update($attributes);
+        redirect("/post/{$attributes['post_id']}");
 
 
     }

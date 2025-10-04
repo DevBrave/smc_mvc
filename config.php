@@ -16,9 +16,9 @@ return [
     ],
 
     'middleware' => [
-        'auth' => AuthMiddleware::class,
-        'guest' => GuestMiddleware::class,
-        'csrf' => CsrfMiddleware::class,
+        'auth' =>  \App\Middleware\AuthMiddleware::class,
+        'guest' =>  \App\Middleware\GuestMiddleware::class,
+        'csrf' =>  \App\Middleware\CsrfMiddleware::class,
         'admin' => \App\Middleware\AdminMiddleware::class,
         'jwt' => \App\Middleware\JwtMiddleware::class,
     ]

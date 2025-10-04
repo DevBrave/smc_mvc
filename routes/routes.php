@@ -69,8 +69,8 @@ $router->patch('/comment/update/{id}','CommentController@update')->only(['auth',
 $router->delete('/comment/{id}','CommentController@destroy')->only(['auth','csrf']);
 
 // like
-$router->post('/like/store','LikeController@like_post')->only(['auth','csrf']);
-$router->post('/comment/like/store','LikeController@like_comment')->only(['auth','csrf']);
+$router->post('/like/store','LikeController@like_post')->only(['auth']);
+$router->post('/comment/like/store','LikeController@like_comment')->only(['auth']);
 
 //follow
 $router->post('/user/{id}/follow','FollowController@follow')->only(['auth','csrf']);
