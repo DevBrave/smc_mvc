@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 
 use App\Model\Follow;
+use App\Model\NotificationRecipient;
 use App\Model\Post;
 use App\Model\User;
 use Core\FileUploader;
@@ -19,11 +20,13 @@ class UserController
         $post_count = Post::post_count($user['id']);
         $follower_count = Follow::follower_count($user['id']);
         $following_count = Follow::following_count($user['id']);
+        $notif_count = NotificationRecipient::notif_count($user['id']);
         view('users/profile.view.php', [
             'user' => $user,
             'post_count' => $post_count,
             'follower_count' => $follower_count,
             'following_count' => $following_count,
+            'notif_count' => $notif_count
         ]);
     }
 

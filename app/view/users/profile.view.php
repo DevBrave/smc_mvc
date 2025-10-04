@@ -58,15 +58,14 @@ layout('nav.php');
                 <p class="text-xl font-semibold text-blue-600"><?= $following_count ?? 0 ?></p>
 
             </div>
+            <div class="text-center md:text-left">
+                <p class="text-sm text-gray-500">Notifications</p>
+                <p class="text-xl font-semibold text-blue-600"><?= $notif_count ?? 0 ?></p>
+
+            </div>
 
             <!-- Buttons -->
             <div class="flex space-x-4">
-                <?php if ($post_count != 0): ?>
-                    <a href="/user/posts/<?= $user['username'] ?>"
-                       class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg shadow">
-                        My Posts
-                    </a>
-                <?php endif; ?>
                 <a href="/user/followers/<?= $user['username'] ?>"
                    class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg shadow">
                     Followers

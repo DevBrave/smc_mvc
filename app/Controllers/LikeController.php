@@ -39,8 +39,7 @@ class LikeController
 
 
             $status = LikePost::create($attributes);
-
-            if ($status) {
+            if ($status && $attributes['user_id'] != $post_owner['user_id']) {
 
                 $notif_id = Notification::create(\user()['id'], 'like_post', 'post', $attributes['post_id']);
 
@@ -75,7 +74,7 @@ class LikeController
            $status =  LikeComment::create($attributes);
 
 
-            if ($status) {
+            if ($status && $attributes['user_id'] != $post_owner['user_id']) {
                 $context_id = $comment_owner['post_id'];
 
                 if (!is_null($comment_owner['parent_id'])) {

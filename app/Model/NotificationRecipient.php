@@ -29,6 +29,15 @@ class NotificationRecipient
 
     }
 
+    public static function notif_count($user_id){
+
+        return App::resolve(Database::class)->query("select count(*) from notification_recipients where user_id=:user_id ",[
+            'user_id' => $user_id,
+        ])->fetchCol();
+
+
+    }
+
 
 
 }

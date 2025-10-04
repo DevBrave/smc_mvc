@@ -17,6 +17,7 @@ class CommentController
     public function store()
     {
         $attributes = Request::all();
+        $post_owner = Post::find($attributes['post_id']);
         // this is for checking csrf
 //        if (!Validator::check_csrf($attributes['csrf_token'])) {
 //            dd('here');
@@ -41,10 +42,13 @@ class CommentController
             $context_id = $comment_owner['parent_id'];
         }
 
-        $notif_id = Notification::create(\user()['id'], 'comment_post', 'comment', $attributes['comment_id'], $context_id);
+        if ($attributes['user_id'] != $post_owner['user_id']){
+            $notif_id = Notification::create(\user()['id'], 'comment_post', 'comment', $attributes['comment_id'], $context_id);
 
-        // notify just one user which is the owner of comment
-        NotificationRecipient::notify($notif_id, $comment_owner['user_id']);
+            // notify just one user which is the owner of comment
+            NotificationRecipient::notify($notif_id, $comment_owner['user_id']);
+        }
+
 
 
         unset($_SESSION['flash_errors']);
