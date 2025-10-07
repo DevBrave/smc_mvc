@@ -116,6 +116,18 @@ class UserController
 
     }
 
+
+    public function show_notifications($username)
+    {
+
+        $ids = NotificationRecipient::hisNotifs(\username($username)['id']);
+        view('users/show_notifications.view.php', [
+            'notifs' => $ids,
+            'title' => 'Notifications'
+        ]);
+
+    }
+
     public function followings($username)
     {
 

@@ -44,6 +44,7 @@ $router->patch('/user/edit/{username}','UserController@update')->only(['auth','c
 $router->get('/user/posts/{username}','UserController@show_posts')->only('auth');
 $router->get('/user/followers/{username}','UserController@followers')->only('auth');
 $router->get('/user/following/{username}','UserController@followings')->only('auth');
+$router->get('/user/notifications/{username}','UserController@show_notifications')->only('auth');
 
 
 // post

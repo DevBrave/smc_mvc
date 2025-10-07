@@ -60,7 +60,7 @@ layout('nav.php');
             </div>
             <div class="text-center md:text-left">
                 <p class="text-sm text-gray-500">Notifications</p>
-                <p class="text-xl font-semibold text-blue-600"><?= $notif_count ?? 0 ?></p>
+                <p class="text-xl font-semibold text-blue-600"><a href="/user/notifications/<?= $user['username']  ?>"><?= $notif_count ?? 0 ?></a></p>
 
             </div>
 
