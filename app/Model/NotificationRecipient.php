@@ -10,11 +10,21 @@ class NotificationRecipient
 
     protected $connection = [];
     protected $table = 'comments';
-    protected $messages = [
-        'like_post' => "user_id liked your post",
-        'comment_post' => "user_id commented on your post",
+    private $types = [
+        'post_created','follow_requested','follow_accepted','like_post','like_comment','comment_post','comment_comment','admin_verify'
     ];
 
+    protected $messages = [
+        'like_post' => "liked your post",
+        'like_comment' => "liked your comment",
+        'comment_post' => "commented on your post",
+        'comment_comment' => "commented on your comment",
+        'post_created' => "just create a post",
+        'follow_requested' => "just requested to follow you",
+        'follow_accepted' => "accept your follow request",
+        'admin_verify' => "You have been achieved to ADMIN role",
+
+    ];
 
 
     public function __construct()
@@ -50,33 +60,30 @@ class NotificationRecipient
     public static function hisNotifs($user_id)
     {
         $instantiate = new static();
-        $notifications = null;
-        $msgs =[];
+        $notifications = [];
+        $msgs = [];
         $notification_ids = array_column(
             App::resolve(Database::class)
                 ->query("select notification_id
             from notification_recipients
-            where user_id=:user_id",
+            where user_id=:user_id order by created_at desc",
                     [
                         'user_id' => $user_id
                     ]
-                )->fetchAll(),'notification_id');
+                )->fetchAll(), 'notification_id');
 
-        foreach ($notification_ids as $notif_id){
-            $notifications = App::resolve(Database::class)->query("select * from notifications where id=:id",[
-               'id' => $notif_id
-            ])->fetchAll();
+
+        foreach ($notification_ids as $notif_id) {
+            $notifications[] = array_merge(...App::resolve(Database::class)->query("select * from notifications where id=:id", [
+                'id' => $notif_id
+            ])->fetchAll());
         }
-
-        $types = array_column($notifications,'type');
-        foreach ($types as $type){
-            if (array_key_exists($type,$instantiate->messages)){
-               $msgs[] = $instantiate->messages[$type];
+        foreach ($notifications as $notif) {
+            if (array_key_exists($notif['type'], $instantiate->messages)) {
+                $msgs[] = User::find($notif['actor_id'])['username'].' '.$instantiate->messages[$notif['type']];
             }
         }
-
         return $msgs;
-
     }
 
 
