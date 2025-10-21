@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Model\Follow;
+use App\Model\Notification;
+use App\Model\NotificationRecipient;
 
 class FollowController
 {
@@ -23,11 +25,21 @@ class FollowController
         // if is not -> insert
 
 
+
+//        if ($status && $attributes['user_id'] != $post_owner['user_id']) {
+//
+//
+//
+//        }
+
         // check the status of the profile
 
         if(user($followed_id)['status'] == 'private'){
 
             Follow::follow($follower_id,$followed_id,'pending');
+            $notif_id = Notification::create($follower_id, 'follow_requested', 'user',$followed_id);
+            // notify just one user which is the owner of post
+            NotificationRecipient::notify($notif_id,[$followed_id]);
             redirect(previousurl());
         }
 
@@ -35,7 +47,9 @@ class FollowController
 
 
         Follow::follow($follower_id,$followed_id,'accepted');
-
+        $notif_id = Notification::create($follower_id, 'followed_user', 'user',$followed_id);
+        // notify just one user which is the owner of post
+        NotificationRecipient::notify($notif_id,[$followed_id]);
 
         redirect(previousurl());
     }

@@ -11,7 +11,9 @@ class NotificationRecipient
     protected $connection = [];
     protected $table = 'comments';
     private $types = [
-        'post_created','follow_requested','follow_accepted','like_post','like_comment','comment_post','comment_comment','admin_verify'
+        'post_created','follow_requested','follow_accepted',
+        'like_post','like_comment','comment_post','comment_comment',
+        'admin_verify','followed_user',
     ];
 
     protected $messages = [
@@ -23,6 +25,7 @@ class NotificationRecipient
         'follow_requested' => "just requested to follow you",
         'follow_accepted' => "accept your follow request",
         'admin_verify' => "You have been achieved to ADMIN role",
+        'followed_user' => "followed you"
 
     ];
 
