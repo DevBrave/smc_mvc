@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Model\Comment;
 use App\Model\Notification;
 use App\Model\NotificationRecipient;
+use App\Model\NotificationService;
 use App\Model\Post;
 use Core\Request;
 use Core\Validator;
@@ -34,19 +35,21 @@ class CommentController
             'body' => 'required|max:500',
         ]);
 
-        Comment::create($attributes);
+        $comment_id = Comment::create($attributes);
 
+        $recipient_ids = [$post_owner['user_id']];
         $context_id = null;
-
-        if (!is_null($comment_owner['parent_id'])) {
-            $context_id = $comment_owner['parent_id'];
+        $context_type = null;
+        if (!is_null($attributes['parent_id'])) {
+            $parent_comment_id = Comment::findById($attributes['parent_id']);
+            $recipient_ids[] = $parent_comment_id;
+            $context_id = $attributes['post_id'];
+            $context_type = 'post';
         }
 
-        if ($attributes['user_id'] != $post_owner['user_id']){
-            $notif_id = Notification::create(\user()['id'], 'comment_post', 'comment', $attributes['comment_id'], $context_id);
-
-            // notify just one user which is the owner of comment
-            NotificationRecipient::notify($notif_id, $comment_owner['user_id']);
+        if ($attributes['user_id'] != $post_owner['user_id']) {
+            $notif_id = NotificationService::createOrBump('comment_post', [$recipient_ids], $attributes['user_id']
+                , 'comment', $comment_id, $context_type, $context_id);
         }
 
 
