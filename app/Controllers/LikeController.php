@@ -9,6 +9,7 @@ use App\Model\LikeComment;
 use App\Model\LikePost;
 use App\Model\Notification;
 use App\Model\NotificationRecipient;
+use App\Model\NotificationService;
 use App\Model\Post;
 use App\Model\User;
 use Core\Request;
@@ -37,14 +38,11 @@ class LikeController
         if (User::find($attributes['user_id']) !== null && $post_owner !== null) {
 
 
-
             $status = LikePost::create($attributes);
             if ($status && $attributes['user_id'] != $post_owner['user_id']) {
 
-                $notif_id = Notification::create(\user()['id'], 'like_post', 'post', $attributes['post_id']);
+                NotificationService::createOrBump('like_post',[$post_owner['user_id']], $attributes['user_id'], 'post', $attributes['post_id']);
 
-                // notify just one user which is the owner of post
-                NotificationRecipient::notify($notif_id,[$post_owner['user_id']]);
             }
 
 
@@ -80,11 +78,13 @@ class LikeController
                 if (!is_null($comment_owner['parent_id'])) {
                     $context_id = $comment_owner['parent_id'];
                 }
+                    $recipients_id = [
+                        $comment_owner['user_id'],
+                        $comment_owner['post_id']
+                    ];
+                $notif_id = NotificationService::createOrBump('like_comment', $recipients_id,
+                    $attributes['user_id'],'comment',$attributes['comment_id'],'post',$context_id);
 
-                $notif_id = Notification::create(\user()['id'], 'like_comment', 'comment', $attributes['comment_id'],$context_id);
-
-                // notify just one user which is the owner of comment
-                NotificationRecipient::notify($notif_id,[$comment_owner['user_id']]);
             }
 
 

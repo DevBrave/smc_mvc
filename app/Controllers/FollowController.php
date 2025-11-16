@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Model\Follow;
 use App\Model\Notification;
 use App\Model\NotificationRecipient;
+use App\Model\NotificationService;
 
 class FollowController
 {
@@ -15,15 +16,13 @@ class FollowController
 
 
         // has the follower_id followed the followed_id
-        if (Follow::has_followed($follower_id,$followed_id)){
+        if (Follow::has_followed($follower_id, $followed_id)) {
             // an error
-           redirect(previousurl());
+            redirect(previousurl());
         }
 
 
-
         // if is not -> insert
-
 
 
 //        if ($status && $attributes['user_id'] != $post_owner['user_id']) {
@@ -34,23 +33,18 @@ class FollowController
 
         // check the status of the profile
 
-        if(user($followed_id)['status'] == 'private'){
+        if (user($followed_id)['status'] == 'private') {
 
-            Follow::follow($follower_id,$followed_id,'pending');
-            $notif_id = Notification::create($follower_id, 'follow_requested', 'user',$followed_id);
-            // notify just one user which is the owner of post
-            NotificationRecipient::notify($notif_id,[$followed_id]);
+            Follow::follow($follower_id, $followed_id, 'pending');
+
+            NotificationService::createOrBump('follow_request', [$followed_id], $follower_id, 'user', $followed_id);
             redirect(previousurl());
         }
 
 
+        Follow::follow($follower_id, $followed_id, 'accepted');
 
-
-        Follow::follow($follower_id,$followed_id,'accepted');
-        $notif_id = Notification::create($follower_id, 'followed_user', 'user',$followed_id);
-        // notify just one user which is the owner of post
-        NotificationRecipient::notify($notif_id,[$followed_id]);
-
+        NotificationService::createOrBump('follow', [$followed_id], $follower_id, 'user', $followed_id);
         redirect(previousurl());
     }
 
@@ -61,9 +55,9 @@ class FollowController
 
 
         // has the follower_id followed the followed_id
-        if (Follow::has_followed($follower_id,$followed_id)){
+        if (Follow::has_followed($follower_id, $followed_id)) {
             // if is not -> insert
-            Follow::unfollow($follower_id,$followed_id);
+            Follow::unfollow($follower_id, $followed_id);
         }
 
 

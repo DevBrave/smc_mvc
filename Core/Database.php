@@ -55,5 +55,20 @@ class Database
 
     }
 
+    public function rollBack(){
+        return $this->connection->rollBack();
+    }
+
+    public function  beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function commit()
+    {
+        return $this->connection->commit();
+
+    }
+
 
 }

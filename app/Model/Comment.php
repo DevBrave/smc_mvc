@@ -38,7 +38,7 @@ class Comment
             'post_id' => $attribute['post_id'],
             'body' => $attribute['body'],
             'parent_id' => $attribute['parent_id'] != null ? $attribute['parent_id'] : null,
-        ]);
+        ])->lastId();
 
 
     }

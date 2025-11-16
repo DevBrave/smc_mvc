@@ -7,6 +7,7 @@ use App\Model\Comment;
 use App\Model\Follow;
 use App\Model\Notification;
 use App\Model\NotificationRecipient;
+use App\Model\NotificationService;
 use App\Model\Post;
 use App\Model\PostImageManager;
 use App\Model\Tag;
@@ -87,9 +88,7 @@ class PostController
         // check that if the user has at least one follower
         if (count($followers) != 0) {
 
-            $notif_id = Notification::create(\user()['id'], 'post_created', 'post', $post_id);
-            // notify just one user which is the owner of comment
-            NotificationRecipient::notify($notif_id, $followers);
+            $notif_id = NotificationService::createOrBump('create_post',$followers,$attributes['user_id'],'post',$post_id);
         }
         if ($hasNewImage) {
             $paths = PostImageManager::uploadImages($attributes['images']);
