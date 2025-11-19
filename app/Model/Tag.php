@@ -67,7 +67,7 @@ class Tag
     {
         return App::resolve(Database::class)->query("select count(*) from post_tag where tag_id=:tag_id ", [
             'tag_id' => $tag_id
-        ])->fetchCol();
+        ])->fetchColumn();
     }
 
     public static function attach_tags($tags, $post_id)

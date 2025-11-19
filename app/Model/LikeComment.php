@@ -55,7 +55,7 @@ class LikeComment
         return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
                 where comment_id=:comment_id group by comment_id", [
             'comment_id' => $comment_id,
-        ])->fetchCol();
+        ])->fetchColumn();
 
     }
 
@@ -67,7 +67,7 @@ class LikeComment
                 [
                     'comment_id' => $comment_id,
                     'user_id' => $user_id,
-                ])->fetchCol() > 0;
+                ])->fetchColumn() > 0;
 
 
     }
@@ -80,7 +80,7 @@ class LikeComment
             [
                 'comment_id' => $comment_id,
                 'user_id' => $user_id,
-            ])->fetchCol();
+            ])->fetchColumn();
     }
 
 

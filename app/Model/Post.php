@@ -88,13 +88,13 @@ class Post
         $instantiate = new static();
         return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where user_id=:user_id", [
             'user_id' => $user_id
-        ])->fetchCol();
+        ])->fetchColumn();
     }
 
     public static function how_many_posts()
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchCol();
+        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchColumn();
 
     }
 

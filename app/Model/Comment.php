@@ -22,7 +22,7 @@ class Comment
         return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
                 where post_id=:post_id and parent_id is null group by post_id", [
             'post_id' => $post_id,
-        ])->fetchCol();
+        ])->fetchColumn();
 
     }
 
@@ -107,7 +107,7 @@ class Comment
     public static function how_many_comments()
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table} ")->fetchCol();
+        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table} ")->fetchColumn();
     }
 
     public static function user_comment($user_id)

@@ -4,11 +4,9 @@
 use Core\Router;
 
 const BASE_PATH = __DIR__ . '/../';
-//var_dump(BASE_PATH);
-//exit();
 
 
-// evrything runs here for the whole server
+// every things run here for the whole server
 
 
 require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer

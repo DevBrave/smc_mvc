@@ -2,7 +2,9 @@
     "name": "devbrave/smc_mvc",
     "description": "small social media with mvc architecture",
     "type": "self-project",
-    "require": {},
+    "require": {
+      "ext-pdo": "*"
+    },
     "autoload": {
         "psr-4": {
             "Core\\" : "Core/",

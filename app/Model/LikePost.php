@@ -58,7 +58,7 @@ class LikePost
         return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
                 where post_id=:post_id group by post_id", [
             'post_id' => $post_id,
-        ])->fetchCol();
+        ])->fetchColumn();
 
     }
 
@@ -70,7 +70,7 @@ class LikePost
                 [
                     'post_id' => $post_id,
                     'user_id' => $user_id,
-                ])->fetchCol() > 0;
+                ])->fetchColumn() > 0;
 
 
     }
@@ -83,14 +83,14 @@ class LikePost
             [
                 'post_id' => $post_id,
                 'user_id' => $user_id,
-            ])->fetchCol();
+            ])->fetchColumn();
     }
 
 
     public static function how_many_likes()
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchCol();
+        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchColumn();
     }
 
 

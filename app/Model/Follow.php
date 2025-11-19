@@ -43,7 +43,7 @@ class Follow
         $result = App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where follower_id=:follower_id and following_id=:following_id",[
             'follower_id' => $follower_id,
             'following_id' => $followed_id,
-        ])->fetchCol();
+        ])->fetchColumn();
         if ($result) {
             return new self();
         }
@@ -74,7 +74,7 @@ class Follow
         return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where following_id=:following_id and status=:status",[
             'following_id' => $id,
             'status' => 'accepted'
-        ])->fetchCol();
+        ])->fetchColumn();
     }
 
     public static function following_count($id)
@@ -83,7 +83,7 @@ class Follow
         return App::resolve(Database::class)->query("select count(*) from {$instantiate->table} where follower_id=:follower_id  and status=:status",[
             'follower_id' => $id,
             'status' => 'accepted'
-        ])->fetchCol();
+        ])->fetchColumn();
     }
 
 

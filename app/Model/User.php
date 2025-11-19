@@ -140,7 +140,7 @@ class User
     public static function how_many_user()
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchCol();
+        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchColumn();
 
     }
 
