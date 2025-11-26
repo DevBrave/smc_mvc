@@ -7,12 +7,7 @@ const BASE_PATH = __DIR__ . '/../';
 //var_dump(BASE_PATH);
 //exit();
 
-<<<<<<< Updated upstream
 
-// evrything runs here for the whole server
-=======
-// every things run here for the whole server
->>>>>>> Stashed changes
 
 
 require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer
