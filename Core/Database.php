@@ -65,6 +65,7 @@ class Database
     {
         return $this->connection->beginTransaction();
     }
+    
 
     public function commit()
     {
