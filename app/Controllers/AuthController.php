@@ -50,7 +50,6 @@ class AuthController
             'first_name' => 'required|min:3',
             'last_name' => 'required|min:2',
         ]);
-
         $hasNewAvatar = false;
         if (User::hasNewAvatar($attributes['avatar'])){
             $hasNewAvatar = true;
@@ -72,7 +71,6 @@ class AuthController
         User::create($attributes);
         unset($_SESSION['flash_errors']);
         redirect('/');
-
 
     }
 

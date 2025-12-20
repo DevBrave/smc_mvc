@@ -26,7 +26,6 @@ class LikeController
 //         dd('here');
 //     }
 
-
         if ($attributes['user_id'] == null) {
             $_SESSION['flash_errors']['not_logged_in'] = 'You should log in';
             redirect(previousurl());
@@ -40,9 +39,7 @@ class LikeController
 
             $status = LikePost::create($attributes);
             if ($status && $attributes['user_id'] != $post_owner['user_id']) {
-
                 NotificationService::createOrBump('like_post',[$post_owner['user_id']], $attributes['user_id'], 'post', $attributes['post_id']);
-
             }
 
 

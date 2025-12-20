@@ -1,58 +1,55 @@
 <?php
 
 namespace Core;
-use Exception as Exception;
 use PDO;
 
 class Database
 {
 
-    public $pdo;
+    public $connection;
     public $statement;
+
+    private $dbms = 'mysql';
 
     public function __construct($config, $username = 'root', $password = '')
     {
 
-        $dsn = 'mysql:' . http_build_query($config, '', ';');
-        $this->pdo = new PDO($dsn, $username, $password, [
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        $dsn = "$this->dbms:" . http_build_query($config, '', ';');
+        $this->connection = new PDO($dsn, $username, $password, [
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
     }
 
-    public function query($query, $params = []): Database
+    public function query($query, $params = [])
     {
-        $this->statement = $this->pdo->prepare($query);
+        $this->statement = $this->connection->prepare($query);
         $this->statement->execute($params);
         return $this;
     }
 
-    // If you call a method that doesn't exist (like 'rowCount'),
-
-    /**
-     * @throws Exception
-     */
-    public function __call($method, $args)
+    public function fetchAll()
     {
-        // 1. Check if the STATEMENT can handle this method
-        if ($this->statement && method_exists($this->statement, $method)) {
-            return call_user_func_array([$this->statement, $method], $args);
-        }
-
-        // 2. Check if the PDO CONNECTION can handle this method
-        if (method_exists($this->pdo, $method)) {
-            return call_user_func_array([$this->pdo, $method], $args);
-        }
-
-        // 3. If neither knows it, throw an error
-        throw new Exception("Method {$method} does not exist on Database or PDO.");
+        return $this->statement->fetchAll();
     }
+
+    public function fetch()
+    {
+
+        return $this->statement->fetch();
+    }
+
+    public function fetchCol()
+    {
+        return $this->statement->fetchColumn();
+    }
+
+
     public function lastId()
     {
-        return $this->pdo->lastInsertId();
+        return $this->connection->lastInsertId();
     }
 
-    public function checkUniqueness($table, $attribute_name, $attribute)
+    public function checkUniquness($table, $attribute_name, $attribute)
     {
         return $this->query("select count(*) from {$table} where $attribute_name=:$attribute_name", [
             $attribute_name => $attribute
@@ -60,21 +57,20 @@ class Database
 
     }
 
-    /**
-     * @throws Exception
-     */
-    public function findOrFail(){
-
-        $result = $this->statement->fetch();
-
-        if (! $result) {
-            throw new Exception('Record not found', 404);
-        }
-
-        return $result;
-
+    public function rollBack(){
+        return $this->connection->rollBack();
     }
 
+    public function  beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function commit()
+    {
+        return $this->connection->commit();
+
+    }
 
 
 }

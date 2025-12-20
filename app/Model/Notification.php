@@ -48,10 +48,12 @@ class Notification
     public static function bump(int $id, int $actorId): void
     {
 
-        App::resolve(Database::class)->query("UPDATE notifications SET cnt = cnt + 1,last_actor_id = :actorId,updated_at = NOW() WHERE id = :id", [
+         App::resolve(Database::class)->query("UPDATE notifications SET cnt = cnt + 1,last_actor_id = :actorId,updated_at = NOW() WHERE id = :id", [
             'actorId' => $actorId,
             'id' => $id
         ]);
+
+
     }
 
     public function decrement(int $id): void

@@ -18,7 +18,7 @@ class NotificationService
 
     public static function createOrBump($type, $recipientIds, $actor_id, $object_type, $object_id, $context_type = null, $context_id = null)
     {
-        $notification_id = null;
+
         if ($recipientIds == null)
             return null;
         $group_key = $type . ':' . $object_type;
@@ -32,7 +32,6 @@ class NotificationService
 
 
             $existence = Notification::findGroupKeyIfExists($group_key, $object_id);
-
 
             if (!$existence) {
 
@@ -55,20 +54,20 @@ class NotificationService
                 Notification::bump($existence['id'], $actor_id);
 
             }
-
             foreach ($recipientIds as $rec_id) {
                 if ($actor_id == $rec_id) {
                     continue;
                 }
-                NotificationRecipient::insertAsUnread($notification_id, $rec_id, $group_key);
+                NotificationRecipient::insertAsUnread($existence['id'], $rec_id, $group_key);
             }
-
 
             $db_instant->commit();
 
 
         } catch (\Throwable $e) {
-            $db_instant->rollBack();
+
+            throw new \PDOException($e);
+//            $db_instant->rollBack();
         }
     }
 

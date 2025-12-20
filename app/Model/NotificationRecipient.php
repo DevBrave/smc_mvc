@@ -18,7 +18,7 @@ class NotificationRecipient
     }
 
 
-    public static function insertAsUnread(int $notificationId, $userId, $groupKey)
+    public static function insertAsUnread($notificationId, $userId, $groupKey)
     {
 
         $sql = "INSERT INTO notification_recipients (notification_id, user_id, group_key, read_at, created_at)
@@ -30,6 +30,12 @@ class NotificationRecipient
                 'uid' => $userId,
                 'gk' => $groupKey
             ]);
+    }
+
+    public static function unreadCount($user_id){
+        return App::resolve(Database::class)->query("select COUNT(*) from notification_recipients where user_id=:uid and read_at is null",[
+            'uid' => $user_id
+        ])->fetchColumn();
     }
 
 

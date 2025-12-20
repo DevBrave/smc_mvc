@@ -167,7 +167,7 @@ This project implements a custom PHP MVC framework from scratch with the followi
 - **Database.php**: PDO-based database abstraction layer with:
     - Prepared statements
     - Query builder
-    - Fetch methods (fetch, fetchAll, fetchColumn)
+    - Fetch methods (fetch, fetchAll, fetchCol)
     - Last insert ID support
 - **Container.php**: Dependency injection container for service management
 - **Validator.php**: Comprehensive validation system with custom rules
