@@ -20,7 +20,7 @@ class UserController
         $post_count = Post::post_count($user['id']);
         $follower_count = Follow::follower_count($user['id']);
         $following_count = Follow::following_count($user['id']);
-        $notif_count = NotificationRecipient::notif_count($user['id']);
+        $notif_count = NotificationRecipient::unreadCount($user['id']);
         view('users/profile.view.php', [
             'user' => $user,
             'post_count' => $post_count,

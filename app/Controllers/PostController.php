@@ -69,7 +69,6 @@ class PostController
             'body' => 'required|max:10000',
         ]);
 
-
         if (empty($attributes['tags'])) {
             $_SESSION['flash_errors']['tag'] = 'Please select at least one tag';
             redirect(previousurl());
@@ -87,8 +86,7 @@ class PostController
 
         // check that if the user has at least one follower
         if (count($followers) != 0) {
-
-            $notif_id = NotificationService::createOrBump('create_post',$followers,$attributes['user_id'],'post',$post_id);
+            NotificationService::createOrBump('create_post',$followers,$attributes['user_id'],'post',$post_id);
         }
         if ($hasNewImage) {
             $paths = PostImageManager::uploadImages($attributes['images']);

@@ -32,5 +32,11 @@ class NotificationRecipient
             ]);
     }
 
+    public static function unreadCount($user_id){
+        return App::resolve(Database::class)->query("select COUNT(*) from notification_recipients where user_id=:uid and read_at is null",[
+            'uid' => $user_id
+        ])->fetchColumn();
+    }
+
 
 }
