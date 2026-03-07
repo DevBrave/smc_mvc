@@ -10,5 +10,8 @@
             "Core\\" : "Core/",
             "App\\": "app/"
         }
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24"
     }
 }
