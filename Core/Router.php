@@ -82,7 +82,7 @@ class Router
                     }
                 }
 
-
+                
                 // Resolve the full namespaced class name
                 $fullClassName = $this->resolveControllerClass($class);
                 // Call method with matched parameters

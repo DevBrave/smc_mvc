@@ -31,15 +31,11 @@ class Tag
                 'name' => $name,
                 'slug' => $slug
             ])->lastID();
-
-
         } else {
             $id = $tag['id'];
         }
 
         return $id;
-
-
     }
 
     public static function findById($tag_id)
@@ -73,16 +69,13 @@ class Tag
     public static function attach_tags($tags, $post_id)
     {
 
-        foreach ($tags['name'] as $name) {
-            dd($name);
-            $tag_id = self::findOrCreate(trim($name));
-            App::resolve(Database::class)->query('insert into post_tag(post_id,tag_id) values(:post_id,:tag_id)', [
+        foreach ($tags as $tag) {
+            $tag_id = self::findOrCreate(trim($tag));
+            App::resolve(Database::class)->query('insert into post_tag (post_id,tag_id) values (:post_id,:tag_id)', [
                 'post_id' => $post_id,
                 'tag_id' => $tag_id
             ]);
         }
-
-
     }
 
     public static function tag_associated($post_id, $attr = '*')
@@ -114,7 +107,6 @@ class Tag
                 if (!in_array($tag['tag_id'], $new_tag)) {
                     $new_tag = $tag;
                 }
-
             }
 
             dd($old_tag);
@@ -125,5 +117,4 @@ class Tag
 
         return $new_tag;
     }
-
 }

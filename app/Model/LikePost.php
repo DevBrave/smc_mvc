@@ -8,8 +8,8 @@ use Core\Database;
 class LikePost
 {
 
-    protected $connection = [];
-    protected $table = 'likes';
+    protected $connection;
+    protected $table = 'like_posts';
 
     public function __construct()
     {
@@ -24,7 +24,6 @@ class LikePost
         if (LikePost::hasLiked($attribute['post_id'], $attribute['user_id'])) {
             LikePost::remove(LikePost::find($attribute['post_id'], $attribute['user_id']));
             return false;
-
         } else {
             $query = "insert into  {$instantiate->table} (user_id,post_id)
             values(:user_id,:post_id)";
@@ -34,10 +33,7 @@ class LikePost
             ]);
 
             return true;
-
         }
-
-
     }
 
 
@@ -58,40 +54,39 @@ class LikePost
         return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
                 where post_id=:post_id group by post_id", [
             'post_id' => $post_id,
-        ])->fetchColumn();
-
+        ])->fetchCol();
     }
 
     public static function hasLiked($post_id, $user_id)
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select id from  {$instantiate->table}
+        return App::resolve(Database::class)->query(
+            "select id from  {$instantiate->table}
                 where post_id=:post_id and user_id=:user_id group by user_id",
-                [
-                    'post_id' => $post_id,
-                    'user_id' => $user_id,
-                ])->fetchColumn() > 0;
-
-
+            [
+                'post_id' => $post_id,
+                'user_id' => $user_id,
+            ]
+        )->fetchCol() > 0;
     }
 
     public static function find($post_id, $user_id)
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select id from  {$instantiate->table}
+        return App::resolve(Database::class)->query(
+            "select id from  {$instantiate->table}
                 where post_id=:post_id and user_id=:user_id group by user_id",
             [
                 'post_id' => $post_id,
                 'user_id' => $user_id,
-            ])->fetchColumn();
+            ]
+        )->fetchCol();
     }
 
 
     public static function how_many_likes()
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchColumn();
+        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchCol();
     }
-
-
 }

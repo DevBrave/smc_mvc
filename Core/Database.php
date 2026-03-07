@@ -1,6 +1,7 @@
 <?php
 
 namespace Core;
+
 use PDO;
 
 class Database
@@ -11,7 +12,7 @@ class Database
 
     private $dbms = 'mysql';
 
-    public function __construct($config, $username = 'root', $password = '')
+    public function __construct($config = [], $username = 'root', $password = '')
     {
 
         $dsn = "$this->dbms:" . http_build_query($config, '', ';');
@@ -54,10 +55,10 @@ class Database
         return $this->query("select count(*) from {$table} where $attribute_name=:$attribute_name", [
             $attribute_name => $attribute
         ])->fetch();
-
     }
 
-    public function rollBack(){
+    public function rollBack()
+    {
         return $this->connection->rollBack();
     }
 
@@ -65,13 +66,10 @@ class Database
     {
         return $this->connection->beginTransaction();
     }
-    
+
 
     public function commit()
     {
         return $this->connection->commit();
-
     }
-
-
 }

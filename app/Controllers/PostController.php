@@ -60,7 +60,6 @@ class PostController
     public function store()
     {
         $attributes = Request::all();
-
         Validator::validate([
             'title' => $attributes['title'],
             'body' => $attributes['body'],
@@ -74,33 +73,52 @@ class PostController
             redirect(previousurl());
         }
 
-
-        $hasNewImage = false;
+        $hasImages = false;
         if (PostImageManager::hasNewImage($attributes['images'])) {
-            $hasNewImage = true;
+            $hasImages = true;
             FileUploader::validate($attributes['images'], 'images');
         }
-        $post_id = Post::create($attributes);
 
-        $followers = Follow::followers(\user()['id']);
+        try {
+            App::resolve(Database::class)->beginTransaction();
 
-        // check that if the user has at least one follower
-        if (count($followers) != 0) {
-            NotificationService::createOrBump('create_post',$followers,$attributes['user_id'],'post',$post_id);
+            $post_id = Post::create($attributes);
+
+            $followers = Follow::followers(\user()['id']);
+
+            // check that if the user has at least one follower
+            if (count($followers) != 0) {
+                NotificationService::createOrBump('create_post', $followers, $attributes['user_id'], 'post', $post_id);
+            }
+            if ($hasImages) {
+                $paths = PostImageManager::uploadImages($attributes['images']);
+                PostImageManager::attachImages([
+                    'post_id' => $post_id,
+                    'images' => $paths,
+                ]);
+            }
+            // dd($attributes['tags']);
+            Tag::attach_tags($attributes['tags'], $post_id);
+
+            App::resolve(Database::class)->commit();
+
+            unset($_SESSION['flash_errors']);
+
+            redirect('/post/' . $post_id);
+        } catch (\Exception $e) {
+            App::resolve(Database::class)->rollBack();
+
+            if (isset($paths) && !empty($paths)) {
+                foreach ($paths as $path) {
+                    if (file_exists($path)) {
+                        unlink($path);
+                    }
+                }
+            }
+
+            $_SESSION['flash_errors']['general'] = 'Something went wrong while saving the post. Please try again.';
+            redirect(previousurl());
         }
-        if ($hasNewImage) {
-            $paths = PostImageManager::uploadImages($attributes['images']);
-            PostImageManager::attachImages([
-                'post_id' => $post_id,
-                'images' => $paths,
-            ]);
-        }
-        Tag::attach_tags($attributes['tags'], $post_id);
-
-        unset($_SESSION['flash_errors']);
-
-        redirect('/post/' . $post_id);
-
     }
 
     public function destroy($id)
@@ -115,7 +133,6 @@ class PostController
 
         Post::delete($id);
         redirect('/posts');
-
     }
 
 
@@ -131,23 +148,12 @@ class PostController
             'images' => $images,
             'tags' => $tags
         ]);
-
     }
 
 
     public function update()
     {
         $attributes = Request::all();
-
-
-        // this is for checking csrf
-//        if (!Validator::check_csrf($attributes['csrf_token'])) {
-//            dd('here');
-//        }
-
-
-//        unset($_SESSION['csrf_token']);
-
 
         Validator::validate([
             'title' => $attributes['title'],
@@ -167,13 +173,11 @@ class PostController
         if (PostImageManager::hasNewImage($attributes['images'])) {
             $hasNewImage = true;
             FileUploader::validate($attributes['images'], 'images');
-
         }
 
         // add new images
         if ($hasNewImage) {
             $paths = PostImageManager::uploadImages($attributes['images']);
-
         }
 
 
@@ -217,15 +221,10 @@ class PostController
             }
 
             App::resolve(Database::class)->query("insert into  post_tag (post_id, tag_id) VALUES (?, ?)", $params);
-
         }
 
 
         unset($_SESSION['flash_errors']);
         redirect('/posts');
-
-
     }
-
-
 }

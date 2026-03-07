@@ -8,7 +8,7 @@ use Core\Database;
 class Comment
 {
 
-    protected $connection = [];
+    protected $connection;
     protected $table = 'comments';
 
     public function __construct()
@@ -22,8 +22,7 @@ class Comment
         return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
                 where post_id=:post_id and parent_id is null group by post_id", [
             'post_id' => $post_id,
-        ])->fetchColumn();
-
+        ])->fetchCol();
     }
 
 
@@ -39,8 +38,6 @@ class Comment
             'body' => $attribute['body'],
             'parent_id' => $attribute['parent_id'] != null ? $attribute['parent_id'] : null,
         ])->lastId();
-
-
     }
 
     public static function update($attribute)
@@ -52,8 +49,6 @@ class Comment
             'id' => $attribute['id'],
             'body' => $attribute['body'],
         ]);
-
-
     }
 
     public static function updateStatus($attributes)
@@ -107,15 +102,11 @@ class Comment
     public static function how_many_comments()
     {
         $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table} ")->fetchColumn();
+        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table} ")->fetchCol();
     }
 
     public static function user_comment($user_id)
     {
-      return User::find($user_id)['username'];
+        return User::find($user_id)['username'];
     }
-
-
-
-
 }

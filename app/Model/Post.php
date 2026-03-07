@@ -13,6 +13,7 @@ class Post
 
     public function __construct()
     {
+
         $this->connection = App::resolve(Database::class);
     }
 
@@ -20,7 +21,6 @@ class Post
     {
         $instantiate = new static();
         $query = "select * from {$instantiate->table}";
-
         return $instantiate->connection->query($query)->fetchAll();
     }
 

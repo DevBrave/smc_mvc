@@ -9,63 +9,27 @@ const BASE_PATH = __DIR__ . '/../';
 // every things run here for the whole server
 
 
-
-
-
 require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer
 
 
 
 session_start();
 
+$config = require(BASE_PATH . 'config.php');
+if (isset($config['auto_login']) && $config['auto_login'] === true) {
+    if (!isset($_SESSION['user'])) {
+        $_SESSION['user'] = 'admin';
+    }
+}
 
 require(BASE_PATH . 'helpers/functions.php');
-
-// autoload with php pure
-//spl_autoload_register(function ($class){
-//    // Define namespace to directory mappings
-//    $namespaceMap = [
-//        'Api\\' => 'app/Controllers/Api/',
-//        'Admin\\' => 'app/Controllers/Admin/',
-//        'Core\\' => 'Core/',
-//        'app\\' => '',
-//    ];
-//
-//    // Check each namespace mapping
-//    foreach ($namespaceMap as $namespace => $directory) {
-//        if (strpos($class, $namespace) === 0) {
-//            $className = str_replace($namespace, '', $class);
-//            $file = base_path($directory . $className . '.php');
-//            if (file_exists($file)) {
-//                require $file;
-//                return;
-//            }
-//        }
-//    }
-//
-//    // Fallback: try as regular controller
-//    $file = base_path('app/Controllers/' . $class . '.php');
-//    if (file_exists($file)) {
-//        require $file;
-//        return;
-//    }
-//
-//    // Final fallback: original behavior
-//    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-//    $fallbackFile = base_path($classPath . '.php');
-//    if (file_exists($fallbackFile)) {
-//        require $fallbackFile;
-//    }
-//}); //
-
-
 
 $router = new Router();
 
 
 require(base_path('routes/routes.php'));
 require(base_path('routes/api.php'));
-//dd($router->all_routes());
+
 
 require(base_path('bootstrap.php'));
 
@@ -77,7 +41,4 @@ $method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 
 //dd($router->all_routes()); // all the routes we added from the routes and api file
 
-$router->routes($current_url,$method);
-
-
-
+$router->routes($current_url, $method);
