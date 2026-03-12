@@ -14,12 +14,24 @@ use Core\Validator;
 
 class UserController
 {
+
+    protected User $user;
+    protected Post $post;
+    protected Follow $follow;
+
+    public function __construct(User $user, Post $post, Follow $follow)
+    {
+        $this->user = $user;
+        $this->post = $post;
+        $this->follow = $follow;
+    }
+
     public function profile($username)
     {
-        $user = User::findByUsername($username);
-        $post_count = Post::post_count($user['id']);
-        $follower_count = Follow::follower_count($user['id']);
-        $following_count = Follow::following_count($user['id']);
+        $user = $this->user->findByUsername($username);
+        $post_count = $this->post->post_count($user['id']);
+        $follower_count = $this->follow->follower_count($user['id']);
+        $following_count = $this->follow->following_count($user['id']);
         $notif_count = NotificationRecipient::unreadCount($user['id']);
         view('users/profile.view.php', [
             'user' => $user,
@@ -32,7 +44,7 @@ class UserController
 
     public function edit($username)
     {
-        $user = User::findByUsername($username);
+        $user = $this->user->findByUsername($username);
         view('users/edit.view.php', [
             'user' => $user
         ]);
@@ -42,14 +54,14 @@ class UserController
     public function update()
     {
         $attributes = Request::all();
-        $user = User::find($attributes['id']);
+        $user = $this->user->find($attributes['id']);
 
-//        if (!Validator::check_csrf($attributes['csrf_token'])) {
-//            dd('here');
-//        }
+        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //            dd('here');
+        //        }
 
 
-//        unset($_SESSION['csrf_token']);
+        //        unset($_SESSION['csrf_token']);
 
 
 
@@ -77,68 +89,62 @@ class UserController
         // check if we have new avatar
         if (isset($_FILES['avatar']) && is_uploaded_file($_FILES['avatar']['tmp_name'])) {
 
-            FileUploader::validate($_FILES['avatar'],'avatar');
+            FileUploader::validate($_FILES['avatar'], 'avatar');
 
 
-            $path = FileUploader::upload($_FILES['avatar'],'avatar');
+            $path = FileUploader::upload($_FILES['avatar'], 'avatar');
 
 
             $attributes['avatar'] = $path;
         }
 
-        User::update($attributes);
+        $this->user->update($attributes);
         unset($_SESSION['flash_errors']);
         redirect('/user/' . $attributes['username']);
-
     }
 
 
     public function show_posts($username)
     {
 
-        $user_id = (User::findByUsername($username))['id'];
-        $posts = Post::user_post($user_id);
+        $user_id = ($this->user->findByUsername($username))['id'];
+        $posts = $this->post->user_post($user_id);
         view('users/show_user_posts.view.php', [
             'posts' => $posts,
         ]);
-
     }
 
     public function followers($username)
     {
 
-        $ids = Follow::followers(\username($username)['id']);
+        $ids = $this->follow->followers($this->user->findByUsername($username)['id']);
 
         view('users/show_followers.view.php', [
             'follows' => $ids,
             'title' => 'Followers'
         ]);
-
     }
 
 
     public function show_notifications($username)
     {
 
-        $notifs = NotificationRecipient::hisNotifs(\username($username)['id']);
-        view('users/show_notifications.view.php', [
-            'notifs' => $notifs,
-            'title' => 'Notifications'
-        ]);
+        // $notifs = NotificationRecipient::hisNotifs(\username($username)['id']);
+        // view('users/show_notifications.view.php', [
+        //     'notifs' => $notifs,
+        //     'title' => 'Notifications'
+        // ]);
 
     }
 
     public function followings($username)
     {
 
-        $followings = Follow::following(\username($username)['id']);
-        $ids = array_column($followings,'following_id');
+        $followings = $this->follow->following($this->user->findByUsername($username)['id']);
+        $ids = array_column($followings, 'following_id');
         view('users/show_followers.view.php', [
             'follows' => $ids,
             'title' => 'Followings'
         ]);
-
     }
-
-
 }

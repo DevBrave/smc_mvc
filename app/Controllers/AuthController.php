@@ -10,6 +10,14 @@ use Core\Validator;
 
 class AuthController
 {
+    protected User $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
+
     public function showRegisterForm()
     {
         view('users/register.view.php', [
@@ -51,7 +59,7 @@ class AuthController
             'last_name' => 'required|min:2',
         ]);
         $hasNewAvatar = false;
-        if (User::hasNewAvatar($attributes['avatar'])){
+        if ($this->user->hasNewAvatar($attributes['avatar'])){
             $hasNewAvatar = true;
             FileUploader::validate($attributes['avatar'],'avatar');
         }
@@ -68,7 +76,7 @@ class AuthController
             redirect('/register');
         }
         $attributes['password'] = password_hash($attributes['password'], PASSWORD_BCRYPT);
-        User::create($attributes);
+        $this->user->create($attributes);
         unset($_SESSION['flash_errors']);
         redirect('/');
 
@@ -96,7 +104,7 @@ class AuthController
             'password' => 'required|password',
         ]);
 
-        User::login($attributes);
+        $this->user->login($attributes);
         unset($_SESSION['flash_errors']);
         redirect('/');
 

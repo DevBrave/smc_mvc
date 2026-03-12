@@ -15,14 +15,21 @@ class CommentController
 {
 
 
+    public function __construct(
+        protected Post $post,
+        protected Comment $comment,
+        protected NotificationService $notifService,
+    ) {}
+
+
     public function store()
     {
         $attributes = Request::all();
-        $post_owner = Post::find($attributes['post_id']);
+        $post_owner = $this->post->find($attributes['post_id']);
         // this is for checking csrf
-//        if (!Validator::check_csrf($attributes['csrf_token'])) {
-//            dd('here');
-//        }
+        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //            dd('here');
+        //        }
         if ($attributes['user_id'] == null) {
             $_SESSION['flash_errors']['not_logged_in'] = 'You should log in';
             redirect(previousurl());
@@ -35,46 +42,50 @@ class CommentController
             'body' => 'required|max:500',
         ]);
 
-        $comment_id = Comment::create($attributes);
+        $comment_id = $this->comment->create($attributes);
 
         $recipient_ids = [$post_owner['user_id']];
         $context_id = null;
         $context_type = null;
         if (!is_null($attributes['parent_id'])) {
-            $parent_comment_id = Comment::findById($attributes['parent_id']);
+            $parent_comment_id = $this->comment->findById($attributes['parent_id']);
             $recipient_ids[] = $parent_comment_id;
             $context_id = $attributes['post_id'];
             $context_type = 'post';
         }
 
         if ($attributes['user_id'] != $post_owner['user_id']) {
-            $notif_id = NotificationService::createOrBump('comment_post', [$recipient_ids], $attributes['user_id']
-                , 'comment', $comment_id, $context_type, $context_id);
+            $notif_id = $this->notifService->createOrBump(
+                'comment_post',
+                [$recipient_ids],
+                $attributes['user_id'],
+                'comment',
+                $comment_id,
+                $context_type,
+                $context_id
+            );
         }
 
 
 
         unset($_SESSION['flash_errors']);
         redirect(previousurl());
-
     }
 
     public function destroy($id)
     {
-        Comment::delete($id);
+        $this->comment->delete($id);
         redirect(previousurl());
-
     }
 
 
     public function edit($id)
     {
-        $post = Post::find($id);
+        $post = $this->post->find($id);
 
         view('posts/edit.view.php', [
             'post' => $post,
         ]);
-
     }
 
 
@@ -83,12 +94,12 @@ class CommentController
         $attributes = Request::all();
 
         // this is for checking csrf
-//        if (!Validator::check_csrf($attributes['csrf_token'])) {
-//            dd('here');
-//        }
+        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //            dd('here');
+        //        }
 
 
-//        unset($_SESSION['csrf_token']);
+        //        unset($_SESSION['csrf_token']);
 
 
         Validator::validate([
@@ -103,9 +114,7 @@ class CommentController
             redirect(previousurl());
         }
 
-        Post::update($attributes);
+        $this->post->update($attributes);
         redirect("/post/{$attributes['post_id']}");
-
-
     }
 }

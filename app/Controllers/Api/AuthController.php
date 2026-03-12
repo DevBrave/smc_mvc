@@ -8,6 +8,13 @@ use Core\Jwt;
 
 class AuthController extends ApiController
 {
+    protected User $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
 //    public function register()
 //    {
 //
@@ -27,13 +34,12 @@ class AuthController extends ApiController
 
     public function login()
     {
-
         SystemController::setCorsHeaders();
         $input = json_decode(file_get_contents('php://input'), true) ?? [];
         $email = trim($input['email'] ?? '');
         $password = $input['password'] ?? '';
 
-        $user = User::findByEmail($email);
+        $user = $this->user->findByEmail($email);
 
         if (!$user || !password_verify($password, $user['password'])) {
             return $this->error('INVALID_CREDENTIALS', 'Wrong username or password', 401);

@@ -1,9 +1,5 @@
 <?php
 
-use App\Model\Comment;
-use App\Model\LikePost;
-use App\Model\User;
-
 layout('header.php');
 ?>
 
@@ -18,7 +14,7 @@ layout('nav.php');
 
                 <div class="flex-1 space-y-2">
                     <div class="flex items-center gap-2 text-sm text-gray-500">
-                        <span class="font-medium text-gray-800"><?= (User::find($post['user_id']))['first_name'] ?></span>
+                        <span class="font-medium text-gray-800"><?= $post['author']['first_name'] ?></span>
                         <span>·</span>
                         <span>10 months ago</span>
                     </div>
@@ -33,14 +29,14 @@ layout('nav.php');
 
                     <div class="flex items-center gap-6 mt-2 text-sm text-gray-600">
                         <div class="flex items-center gap-1">
-                            <?= LikePost::like_count($post['id']) != 0 ? '❤️' . LikePost::like_count($post['id'])  : '❤️ 0'  ?>
+                            <?= $post['like_count'] != 0 ? '❤️' . $post['like_count']  : '❤️ 0'  ?>
                         </div>
 
                         <div class="flex items-center gap-1">
-                            <?= Comment::comment_count($post['id']) != 0 ? '💬' . Comment::comment_count($post['id']) : '💬 0'  ?>
+                            <?= $post['comment_count'] != 0 ? '💬' . $post['comment_count'] : '💬 0'  ?>
                         </div>
                         <div class="flex items-center gap-1">
-                            <?php if (isset($_SESSION['user']) && $post['user_id'] == (User::findByUsername($_SESSION['user']))['id']): ?>
+                            <?php if (isset($_SESSION['user']) && $post['user_id'] == ($userModel->findByUsername($_SESSION['user']))['id']): ?>
                                 <a href="/post/edit/<?= $post['id'] ?>"
                                     class="inline-flex rounded bg-indigo-600 px-2 py-1 text-white text-sm font-semibold shadow-md hover:bg-indigo-700 transition duration-200">
                                     Edit

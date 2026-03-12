@@ -12,7 +12,9 @@ layout('admin/header.php'); ?>
         <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
-                <div class="col-sm-6"><h3 class="mb-0">Comments</h3></div>
+                <div class="col-sm-6">
+                    <h3 class="mb-0">Comments</h3>
+                </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="/admin">Home</a></li>
@@ -32,66 +34,68 @@ layout('admin/header.php'); ?>
             <!--begin::Row-->
             <div class="row">
                 <div class="card mb-4">
-                    <div class="card-header"><h3 class="card-title">All Comments</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">All Comments</h3>
+                    </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table class="table table-bordered">
                             <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Title</th>
-                                <th>Username</th>
-                                <th>Status</th>
-                                <th>Change</th>
-                                <th>Commented_at</th>
-                            </tr>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Title</th>
+                                    <th>Username</th>
+                                    <th>Status</th>
+                                    <th>Change</th>
+                                    <th>Commented_at</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <?php $i = 1;
-                            foreach ($comments as $comment): ?>
-                                <tr class="align-middle">
-                                    <td>
-                                        <?= $i ?>
-                                    </td>
-                                    <td>
-                                        <?= $comment['body'] ?>
-                                    </td>
-                                    <td>
-                                        <?= Comment::user_comment($comment['user_id']) ?>
+                                <?php $i = 1;
+                                foreach ($comments as $comment): ?>
+                                    <tr class="align-middle">
+                                        <td>
+                                            <?= $i ?>
+                                        </td>
+                                        <td>
+                                            <?= $comment['body'] ?>
+                                        </td>
+                                        <td>
+                                            <?= $commentModel->getAuthorUsername($comment['user_id']) ?>
 
-                                    </td>
-                                    <td>
-                                        <?= $comment['status'] === 1 ? '<span class="badge bg-primary"> Verified </span>' : 'Still waiting' ?>
+                                        </td>
+                                        <td>
+                                            <?= $comment['status'] === 1 ? '<span class="badge bg-primary"> Verified </span>' : 'Still waiting' ?>
 
-                                    </td>
-                                    <td>
+                                        </td>
+                                        <td>
 
-                                        <?php if ($comment['status'] == 1): ?>
-                                            <form action="/admin/comment/update" method="POST">
-                                                <?= csrf_input() ?>
-                                                <input type="hidden" name="_method" value="PATCH">
-                                                <input type="hidden" name="id" value="<?= $comment['id'] ?>">
-                                                <input type="hidden" name="status" value="0">
-                                                <button type="submit" class="btn btn-outline-danger px-1 py-1">Not
-                                                    Verified
-                                                </button>
-                                            </form>
-                                        <?php else : ?>
-                                            <form action="/admin/comment/update" method="POST">
-                                                <?= csrf_input() ?>
-                                                <input type="hidden" name="_method" value="PATCH">
-                                                <input type="hidden" name="id" value="<?= $comment['id'] ?>">
-                                                <input type="hidden" name="status" value="1">
-                                                <button type="submit" class="btn btn-outline-success px-1 py-1">Verify
-                                                </button>
-                                            </form>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?= date("F jS, Y h:i", strtotime($comment['created_at'])) ?>
-                                    </td>
-                                </tr>
-                                <?php $i++; endforeach; ?>
+                                            <?php if ($comment['status'] == 1): ?>
+                                                <form action="/admin/comment/update" method="POST">
+                                                    <?= csrf_input() ?>
+                                                    <input type="hidden" name="_method" value="PATCH">
+                                                    <input type="hidden" name="id" value="<?= $comment['id'] ?>">
+                                                    <input type="hidden" name="status" value="0">
+                                                    <button type="submit" class="btn btn-outline-danger px-1 py-1">Unverified
+                                                    </button>
+                                                </form>
+                                            <?php else : ?>
+                                                <form action="/admin/comment/update" method="POST">
+                                                    <?= csrf_input() ?>
+                                                    <input type="hidden" name="_method" value="PATCH">
+                                                    <input type="hidden" name="id" value="<?= $comment['id'] ?>">
+                                                    <input type="hidden" name="status" value="1">
+                                                    <button type="submit" class="btn btn-outline-success px-1 py-1">Verify
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?= date("F jS, Y h:i", strtotime($comment['created_at'])) ?>
+                                        </td>
+                                    </tr>
+                                <?php $i++;
+                                endforeach; ?>
                             </tbody>
                         </table>
                     </div>

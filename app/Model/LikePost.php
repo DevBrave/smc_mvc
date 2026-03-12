@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use Core\App;
 use Core\Database;
 
 class LikePost
@@ -11,23 +10,20 @@ class LikePost
     protected $connection;
     protected $table = 'like_posts';
 
-    public function __construct()
+    public function __construct(Database $connection)
     {
-        $this->connection = App::resolve(Database::class);
+        $this->connection = $connection;
     }
 
-    public static function create($attribute)
+    public function create($attribute)
     {
-
-        $instantiate = new static();
-
-        if (LikePost::hasLiked($attribute['post_id'], $attribute['user_id'])) {
-            LikePost::remove(LikePost::find($attribute['post_id'], $attribute['user_id']));
+        if ($this->hasLiked($attribute['post_id'], $attribute['user_id'])) {
+            $this->remove($this->find($attribute['post_id'], $attribute['user_id']));
             return false;
         } else {
-            $query = "insert into  {$instantiate->table} (user_id,post_id)
+            $query = "insert into  {$this->table} (user_id,post_id)
             values(:user_id,:post_id)";
-            $instantiate->connection->query($query, [
+            $this->connection->query($query, [
                 'user_id' => $attribute['user_id'],
                 'post_id' => $attribute['post_id'],
             ]);
@@ -37,31 +33,28 @@ class LikePost
     }
 
 
-    public static function remove($id)
+    public function remove($id)
     {
-        $instantiate = new static();
-        $query = "delete from {$instantiate->table} where id=:id";
+        $query = "delete from {$this->table} where id=:id";
 
-        $instantiate->connection->query($query, [
+        $this->connection->query($query, [
             'id' => $id,
         ]);
     }
 
 
-    public static function like_count($post_id)
+    public function like_count($post_id)
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
+        return $this->connection->query("select count(*) from  {$this->table}
                 where post_id=:post_id group by post_id", [
             'post_id' => $post_id,
         ])->fetchCol();
     }
 
-    public static function hasLiked($post_id, $user_id)
+    public function hasLiked($post_id, $user_id)
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query(
-            "select id from  {$instantiate->table}
+        return $this->connection->query(
+            "select id from  {$this->table}
                 where post_id=:post_id and user_id=:user_id group by user_id",
             [
                 'post_id' => $post_id,
@@ -70,11 +63,10 @@ class LikePost
         )->fetchCol() > 0;
     }
 
-    public static function find($post_id, $user_id)
+    public function find($post_id, $user_id)
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query(
-            "select id from  {$instantiate->table}
+        return $this->connection->query(
+            "select id from  {$this->table}
                 where post_id=:post_id and user_id=:user_id group by user_id",
             [
                 'post_id' => $post_id,
@@ -84,9 +76,8 @@ class LikePost
     }
 
 
-    public static function how_many_likes()
+    public function how_many_likes()
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchCol();
+        return $this->connection->query("select count(*) from  {$this->table}")->fetchCol();
     }
 }

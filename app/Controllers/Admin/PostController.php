@@ -7,15 +7,19 @@ use App\Model\Post;
 
 class PostController
 {
-    
-    public function index()
+    protected Post $post;
+
+    public function __construct(Post $post)
     {
-        $posts = Post::all();
-        view('admin/posts/index.view.php',[
-            'posts' => $posts,
-        ]);
+        $this->post = $post;
     }
 
-
-
+    public function index()
+    {
+        $posts = $this->post->all();
+        view('admin/posts/index.view.php', [
+            'posts' => $posts,
+            'post_model' => $this->post,
+        ]);
+    }
 }

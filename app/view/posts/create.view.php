@@ -3,7 +3,7 @@
 use App\Model\User;
 
 layout('header.php');
-$user = User::findByUsername($_SESSION['user'], 'id');
+$user = auth()->user();
 ?>
 
 <?php

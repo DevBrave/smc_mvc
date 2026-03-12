@@ -4,16 +4,14 @@
 namespace App\Controllers;
 
 use App\Model\Comment;
-use App\Model\Follow;
-use App\Model\Notification;
-use App\Model\NotificationRecipient;
-use App\Model\NotificationService;
+use App\Model\LikePost;
 use App\Model\Post;
 use App\Model\PostImageManager;
+use App\Model\Services\PostService;
 use App\Model\Tag;
 use App\Model\User;
-use Core\App;
-use Core\Config;
+use App\Model\LikeComment;
+use App\Model\Follow;
 use Core\Database;
 use Core\FileUploader;
 use Core\Request;
@@ -21,27 +19,65 @@ use Core\Validator;
 
 class PostController
 {
+    protected Database $db;
+    protected PostService $postService;
+    protected Post $post;
+    protected User $user;
+    protected Comment $comment;
+    protected LikePost $likePost;
+    protected Tag $tag;
+    protected LikeComment $likeComment;
+    protected Follow $follow;
+
+    public function __construct(Database $db, PostService $postService, Post $post, User $user, Comment $comment, LikePost $likePost, Tag $tag, LikeComment $likeComment, Follow $follow)
+    {
+
+        $this->db = $db;
+        $this->postService = $postService;
+        $this->post = $post;
+        $this->user = $user;
+        $this->comment = $comment;
+        $this->likePost = $likePost;
+        $this->tag = $tag;
+        $this->likeComment = $likeComment;
+        $this->follow = $follow;
+    }
+
     public function index()
     {
-        $posts = Post::all();
+        $posts = $this->post->all();
+
+        $postsData = array_map(function ($post) {
+            $post['author'] = $this->user->find($post['user_id']);
+            $post['like_count'] = $this->likePost->like_count($post['id']);
+            $post['comment_count'] = $this->comment->comment_count($post['id']);
+            return $post;
+        }, $posts);
+
         view('posts/index.view.php', [
-            'posts' => $posts,
+            'posts' => $postsData,
+            'userModel' => $this->user, // In case view needs it for checking permissions
         ]);
     }
 
     public function show($id)
     {
-        $post = Post::find($id);
-        $comments = Comment::findByPostId($post['id']);
+        $post = $this->post->find($id);
+        $comments = $this->comment->findByPostId($post['id']);
         $images = (PostImageManager::getImageByPostId($post['id'])) ?? null;
-        $user = isset($_SESSION['user']) ? (User::findByUsername($_SESSION['user'])) : ['id' => null];
-        $tags = Tag::tag_associated($post['id']);
-
+        $currentUser = isset($_SESSION['user']) ? ($this->user->findByUsername($_SESSION['user'])) : ['id' => null];
+        $tags = $this->tag->tag_associated($post['id']);
 
         view('posts/show.view.php', [
             'post' => $post,
             'comments' => $comments,
-            'user' => $user,
+            'currentUser' => $currentUser,
+            'userModel' => $this->user,
+            'commentModel' => $this->comment,
+            'tagModel' => $this->tag,
+            'likePostModel' => $this->likePost,
+            'likeCommentModel' => $this->likeComment,
+            'followModel' => $this->follow,
             'images' => $images,
             'tags' => $tags,
         ]);
@@ -50,7 +86,7 @@ class PostController
 
     public function create()
     {
-        $tags = Tag::all();
+        $tags = $this->tag->all();
         view('posts/create.view.php', [
             'tags' => $tags
         ]);
@@ -80,42 +116,10 @@ class PostController
         }
 
         try {
-            App::resolve(Database::class)->beginTransaction();
-
-            $post_id = Post::create($attributes);
-
-            $followers = Follow::followers(\user()['id']);
-
-            // check that if the user has at least one follower
-            if (count($followers) != 0) {
-                NotificationService::createOrBump('create_post', $followers, $attributes['user_id'], 'post', $post_id);
-            }
-            if ($hasImages) {
-                $paths = PostImageManager::uploadImages($attributes['images']);
-                PostImageManager::attachImages([
-                    'post_id' => $post_id,
-                    'images' => $paths,
-                ]);
-            }
-            // dd($attributes['tags']);
-            Tag::attach_tags($attributes['tags'], $post_id);
-
-            App::resolve(Database::class)->commit();
-
+            $post_id = $this->postService->createPost($attributes, $hasImages);
             unset($_SESSION['flash_errors']);
-
             redirect('/post/' . $post_id);
         } catch (\Exception $e) {
-            App::resolve(Database::class)->rollBack();
-
-            if (isset($paths) && !empty($paths)) {
-                foreach ($paths as $path) {
-                    if (file_exists($path)) {
-                        unlink($path);
-                    }
-                }
-            }
-
             $_SESSION['flash_errors']['general'] = 'Something went wrong while saving the post. Please try again.';
             redirect(previousurl());
         }
@@ -131,16 +135,16 @@ class PostController
             }
         }
 
-        Post::delete($id);
+        $this->post->delete($id);
         redirect('/posts');
     }
 
 
     public function edit($id)
     {
-        $post = Post::find($id);
+        $post = $this->post->find($id);
         $images = (PostImageManager::getImageByPostId($post['id'])) ?? null;
-        $tags = Tag::tag_associated($post['id'], 'tag_id');
+        $tags = $this->tag->tag_associated($post['id'], 'tag_id');
 
 
         view('posts/edit.view.php', [
@@ -181,7 +185,7 @@ class PostController
         }
 
 
-        $post_id = Post::update($attributes);
+        $post_id = $this->post->update($attributes);
 
         if ($hasNewImage) {
 
@@ -197,7 +201,7 @@ class PostController
         $newTagsId = $attributes['tags'];
 
 
-        $associatedCurrentTag = App::resolve(Database::class)->query('select * from post_tag where post_id=:post_id', [
+        $associatedCurrentTag = $this->db->query('select * from post_tag where post_id=:post_id', [
             'post_id' => $post_id
         ])->fetchAll();
 
@@ -211,7 +215,7 @@ class PostController
             $in = implode(',', array_fill(0, count($tagsToRemove), '?'));
             $params = array_merge([$post_id], $tagsToRemove);
 
-            App::resolve(Database::class)->query("delete from post_tag where post_id = ? and tag_id in ($in)", $params);
+            $this->db->query("delete from post_tag where post_id = ? and tag_id in ($in)", $params);
         }
 
 
@@ -220,7 +224,7 @@ class PostController
                 $params = [$post_id, $tagId];
             }
 
-            App::resolve(Database::class)->query("insert into  post_tag (post_id, tag_id) VALUES (?, ?)", $params);
+            $this->db->query("insert into  post_tag (post_id, tag_id) VALUES (?, ?)", $params);
         }
 
 

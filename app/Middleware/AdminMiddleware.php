@@ -9,10 +9,10 @@ class AdminMiddleware implements MiddlewareInterface
 {
     public static function handle()
     {
-       if(!User::isAdmin($_SESSION['user'])){
-           // not an admin user
+        if (!auth()->isAdmin()) {
 
-           redirect('/');
-       }
+            // not an admin user
+            redirect('/');
+        }
     }
 }

@@ -1,20 +1,19 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
 
-// Define the base path function if it doesn't exist yet
-if (!function_exists('base_path')) {
-    function base_path($path = '')
-    {
-        return __DIR__ . '/../' . $path;
-    }
-}
+use Core\App;
+use Core\Database;
+
+const BASE_PATH = __DIR__ . '/../';
+
+require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer
+
+require(BASE_PATH . '/helpers/functions.php');
 
 // Bootstrap the application (this sets up the container and DB connection)
 require base_path('bootstrap.php');
 
-use Core\App;
-use Core\Database;
+
 
 $db = App::resolve(Database::class);
 

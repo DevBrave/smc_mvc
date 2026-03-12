@@ -7,22 +7,22 @@ use Core\Database;
 
 class User
 {
-    protected $connection = [];
+
     protected $table = 'users';
 
-    public function __construct()
-    {
-        $this->connection = App::resolve(Database::class);
-    }
+    public function __construct(
+        protected Database $db
+    ) {}
 
-    public static function create($attribute)
+
+    public function create($attribute)
     {
-        $instantiate = new static();
-        $query ="insert into {$instantiate->table} (username,first_name,last_name,email,avatar,password)
+
+        $query = "insert into {$this->table} (username,first_name,last_name,email,avatar,password)
             values(:username,:first_name,:last_name,:email,:avatar,:password)";
 
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'username' => $attribute['username'],
             'first_name' => $attribute['first_name'],
             'last_name' => $attribute['last_name'],
@@ -31,43 +31,39 @@ class User
             'password' => $attribute['password'],
         ]);
         return $_SESSION['user'] = $attribute['username'];
-
     }
 
-    public static function update($attribute)
+    public  function update($attribute)
     {
-        $instantiate = new static();
-        $query = "UPDATE {$instantiate->table} SET 
+
+        $query = "UPDATE {$this->table} SET 
             username = :username,
             first_name = :first_name,
             last_name = :last_name,
             bio = :bio ,
-            role = :role,
             avatar = :avatar,
             status = :status
             WHERE id = :id";
 
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'username' => $attribute['username'],
             'first_name' => $attribute['first_name'],
             'last_name' => $attribute['last_name'],
             'bio' => $attribute['bio'],
             'avatar' => $attribute['avatar'],
             'status' => $attribute['status'],
-            'role' => $attribute['role'] ?? 'user',
             'id' => $attribute['id']
         ]);
 
         return $_SESSION['user'] = $attribute['username'];
-
     }
 
 
-    public static function updateByAdmin($attribute)
+    public  function updateByAdmin($attribute)
     {
-        $instantiate = new static();
-        $query = "UPDATE {$instantiate->table} SET 
+
+        $query = "UPDATE {$this->table} SET 
             username = :username,
             first_name = :first_name,
             last_name = :last_name,
@@ -75,7 +71,7 @@ class User
             role = :role
             WHERE id = :id";
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'username' => $attribute['username'],
             'first_name' => $attribute['first_name'],
             'last_name' => $attribute['last_name'],
@@ -86,9 +82,9 @@ class User
     }
 
 
-    public static function login($attributes)
+    public  function login($attributes)
     {
-        $user = self::findByEmail($attributes['email']);
+        $user = $this->findByEmail($attributes['email']);
 
 
         if (!$user || !password_verify($attributes['password'], $user['password'])) {
@@ -100,63 +96,59 @@ class User
     }
 
 
-    public static function findByEmail($email,$attr = '*')
+    public  function findByEmail($email, $attr = '*')
     {
-        return App::resolve(Database::class)->query("select {$attr} from users where email=:email", [
+        return $this->db->query("select {$attr} from users where email=:email", [
             'email' => $email,
         ])->fetch();
     }
 
-    public static function findByUsername($username,$attr = '*')
+    public  function findByUsername($username, $attr = '*')
     {
 
-        return App::resolve(Database::class)->query("select {$attr} from users where username=:username", [
+        return $this->db->query("select {$attr} from users where username=:username", [
             'username' => $username,
         ])->fetch();
     }
 
-    public static function find($id)
+    public  function find($id)
     {
-        return App::resolve(Database::class)->query("select * from users where id=:id", [
-            'id'=> $id,
+        return $this->db->query("select * from users where id=:id", [
+            'id' => $id,
         ])->fetch();
     }
 
-    public static function hasNewAvatar($file)
+    public  function hasNewAvatar($file)
     {
-        if ($file['name'][0] == null){
+        if ($file['name'][0] == null) {
             return false;
         }
         return true;
     }
 
-    public static function isAdmin($username)
+    public  function isAdmin($username)
     {
-        $user = User::findByUsername($username);
+        $user = $this->findByUsername($username);
         return ($user['role'] == 'admin');
-
     }
 
-    public static function how_many_user()
+    public  function how_many_user()
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}")->fetchColumn();
 
+        return $this->db->query("select count(*) from  {$this->table}")->fetchCol();
     }
 
-    public static function logged_in_user_avatar(){
-
-        return  (User::findByUsername($_SESSION['user']))['avatar'] ;
-    }
-
-    public static function all()
+    public  function logged_in_user_avatar()
     {
-        $instantiate = new static();
-        $query = "select * from {$instantiate->table}";
 
-        return $instantiate->connection->query($query)->fetchAll();
+        return ($this->findByUsername($_SESSION['user']))['avatar'];
     }
 
+    public  function all()
+    {
 
+        $query = "select * from {$this->table}";
 
+        return $this->db->query($query)->fetchAll();
+    }
 }

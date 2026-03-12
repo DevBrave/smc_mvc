@@ -2,37 +2,34 @@
 
 namespace App\Model;
 
-use Core\App;
 use Core\Database;
 
 class Comment
 {
 
-    protected $connection;
+
     protected $table = 'comments';
+    // this code is dedicated to my idol HadiKhan
+    public function __construct(
+        protected Database $db,
+        protected User $user,
+    ) {}
 
-    public function __construct()
+    public function comment_count($post_id)
     {
-        $this->connection = App::resolve(Database::class);
-    }
-
-    public static function comment_count($post_id)
-    {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table}
+        return $this->db->query("select count(*) from  {$this->table}
                 where post_id=:post_id and parent_id is null group by post_id", [
             'post_id' => $post_id,
         ])->fetchCol();
     }
 
 
-    public static function create($attribute)
+    public function create($attribute)
     {
-        $instantiate = new static();
-        $query = "insert into  {$instantiate->table} (user_id,post_id,body,parent_id)
+        $query = "insert into  {$this->table} (user_id,post_id,body,parent_id)
             values(:user_id,:post_id,:body,:parent_id)";
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'user_id' => $attribute['user_id'],
             'post_id' => $attribute['post_id'],
             'body' => $attribute['body'],
@@ -40,73 +37,66 @@ class Comment
         ])->lastId();
     }
 
-    public static function update($attribute)
+    public function update($attribute)
     {
-        $instantiate = new static();
-        $query = "update  {$instantiate->table}  set body=:body where id=:id";
+        $query = "update  {$this->table}  set body=:body where id=:id";
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'id' => $attribute['id'],
             'body' => $attribute['body'],
         ]);
     }
 
-    public static function updateStatus($attributes)
+    public function updateStatus($attributes)
     {
-        $instantiate = new static();
-        $query = "update  {$instantiate->table}  set status=:status where id=:id";
+        $query = "update  {$this->table}  set status=:status where id=:id";
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'id' => $attributes['id'],
             'status' => $attributes['status'],
         ]);
     }
 
 
-    public static function delete($id)
+    public function delete($id)
     {
-        $instantiate = new static();
-        $query = "delete from {$instantiate->table} where id=:id";
+        $query = "delete from {$this->table} where id=:id";
 
-        $instantiate->connection->query($query, [
+        $this->db->query($query, [
             'id' => $id,
         ]);
     }
 
 
-    public static function findByPostId($id)
+    public function findByPostId($id)
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select * from  {$instantiate->table} where post_id=:post_id and status =:status", [
+        return $this->db->query("select * from  {$this->table} where post_id=:post_id and status =:status", [
             'post_id' => $id,
             'status' => 1
         ])->fetchAll();
     }
 
-    public static function findById($id)
+    public function findById($id)
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select * from  {$instantiate->table} where id=:id", [
+        return $this->db->query("select * from  {$this->table} where id=:id", [
             'id' => $id,
         ])->fetch();
     }
 
-    public static function all()
+    public function all()
     {
-        $instantiate = new static();
-        $query = "select * from {$instantiate->table}";
+        $query = "select * from {$this->table}";
 
-        return $instantiate->connection->query($query)->fetchAll();
+        return $this->db->query($query)->fetchAll();
     }
 
-    public static function how_many_comments()
+    public function how_many_comments()
     {
-        $instantiate = new static();
-        return App::resolve(Database::class)->query("select count(*) from  {$instantiate->table} ")->fetchCol();
+        return $this->db->query("select count(*) from  {$this->table} ")->fetchCol();
     }
 
-    public static function user_comment($user_id)
+    public function getAuthorUsername($user_id)
     {
-        return User::find($user_id)['username'];
+        return $this->user->find($user_id)['username'];
     }
 }

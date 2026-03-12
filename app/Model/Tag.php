@@ -2,32 +2,30 @@
 
 namespace App\Model;
 
-use Core\App;
 use Core\Database;
 
 class Tag
 {
 
-    protected $connection = [];
+
     protected $table = 'tags';
 
-    public function __construct()
-    {
-        $this->connection = App::resolve(Database::class);
-    }
+    public function __construct(
+        protected Database $db
+    ) {}
 
 
-    public static function findOrCreate($name)
+    public function findOrCreate($name)
     {
 
         $slug = strtolower(str_replace(' ', '-', $name));
 
-        $tag = App::resolve(Database::class)->query("SELECT * FROM tags where slug=:slug", [
+        $tag = $this->db->query("SELECT * FROM tags where slug=:slug", [
             'slug' => $slug
         ])->fetch();
         if (!$tag) {
 
-            $id = App::resolve(Database::class)->query("insert into tags (name,slug) values (:name,:slug)", [
+            $id = $this->db->query("insert into tags (name,slug) values (:name,:slug)", [
                 'name' => $name,
                 'slug' => $slug
             ])->lastID();
@@ -38,61 +36,61 @@ class Tag
         return $id;
     }
 
-    public static function findById($tag_id)
+    public function findById($tag_id)
     {
-        return App::resolve(Database::class)->query("select * from tags where id=:tag_id", [
+        return $this->db->query("select * from tags where id=:tag_id", [
             'tag_id' => $tag_id,
         ])->fetch();
     }
 
-    public static function findBySlug($slug)
+    public function findBySlug($slug)
     {
-        return App::resolve(Database::class)->query("select * from tags where slug=:slug", [
+        return $this->db->query("select * from tags where slug=:slug", [
             'slug' => $slug,
         ])->fetch();
     }
 
-    public static function itsPosts($tag_id)
+    public function itsPosts($tag_id)
     {
-        return App::resolve(Database::class)->query("select post_id from post_tag where tag_id=:tag_id", [
+        return $this->db->query("select post_id from post_tag where tag_id=:tag_id", [
             'tag_id' => $tag_id
         ])->fetchAll();
     }
 
-    public static function how_many_posts($tag_id)
+    public function how_many_posts($tag_id)
     {
-        return App::resolve(Database::class)->query("select count(*) from post_tag where tag_id=:tag_id ", [
+        return $this->db->query("select count(*) from post_tag where tag_id=:tag_id ", [
             'tag_id' => $tag_id
-        ])->fetchColumn();
+        ])->fetchCol();
     }
 
-    public static function attach_tags($tags, $post_id)
+    public function attach_tags($tags, $post_id)
     {
 
         foreach ($tags as $tag) {
-            $tag_id = self::findOrCreate(trim($tag));
-            App::resolve(Database::class)->query('insert into post_tag (post_id,tag_id) values (:post_id,:tag_id)', [
+            $tag_id = $this->findOrCreate(trim($tag));
+            $this->db->query('insert into post_tag (post_id,tag_id) values (:post_id,:tag_id)', [
                 'post_id' => $post_id,
                 'tag_id' => $tag_id
             ]);
         }
     }
 
-    public static function tag_associated($post_id, $attr = '*')
+    public function tag_associated($post_id, $attr = '*')
     {
-        return App::resolve(Database::class)->query("select {$attr} from post_tag where post_id=:post_id", [
+        return $this->db->query("select {$attr} from post_tag where post_id=:post_id", [
             'post_id' => $post_id
         ])->fetchAll();
     }
 
-    public static function all()
+    public function all()
     {
-        return App::resolve(Database::class)->query('select * from tags')->fetchAll();
+        return $this->db->query('select * from tags')->fetchAll();
     }
 
-    public static function is_attached($post_id, $tags_id)
+    public function is_attached($post_id, $tags_id)
     {
-        $tag_with_post_id = App::resolve(Database::class)->query("select * from post_tag  where post_id=:post_id", [
+        $tag_with_post_id = $this->db->query("select * from post_tag  where post_id=:post_id", [
             'post_id' => $post_id,
         ])->fetchAll();
 

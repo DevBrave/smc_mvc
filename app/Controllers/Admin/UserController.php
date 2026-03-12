@@ -10,18 +10,24 @@ use Core\Validator;
 class UserController
 {
 
+    protected User $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
 
     public function index()
     {
-        $users = User::all();
-        view('admin/users/index.view.php',[
+        $users = $this->user->all();
+        view('admin/users/index.view.php', [
             'users' => $users,
         ]);
     }
 
     public function edit($username)
     {
-        $user = User::findByUsername($username);
+        $user = $this->user->findByUsername($username);
         view('admin/users/edit.view.php', [
             'user' => $user
         ]);
@@ -29,18 +35,16 @@ class UserController
 
     public function update()
     {
-
         $attributes = Request::all();
-        $user = User::findByUsername($attributes['username']);
+        $user = $this->user->findByUsername($attributes['username']);
         $attributes['id'] = $user['id'];
 
-//        if (!Validator::check_csrf($attributes['csrf_token'])) {
-//            dd('here');
-//        }
+        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //            dd('here');
+        //        }
 
 
-//        unset($_SESSION['csrf_token']);
-
+        //        unset($_SESSION['csrf_token']);
 
         $validationFields = [
             'first_name' => $attributes['first_name'],
@@ -60,11 +64,9 @@ class UserController
         }
 
         Validator::validate($validationFields, $validationRules);
-        User::updateByAdmin($attributes);
+        $this->user->updateByAdmin($attributes);
 
         unset($_SESSION['flash_errors']);
         redirect(admin_path('users'));
-
     }
-
 }

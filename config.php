@@ -16,7 +16,7 @@ return [
     ],
 
     // Set to true to automatically login as 'admin' in local development
-    'auto_login' => true,
+    // 'auto_login' => true,
 
     'middleware' => [
         'auth' =>  \App\Middleware\AuthMiddleware::class,
@@ -27,7 +27,3 @@ return [
     ]
 
 ];
-
-
-
-

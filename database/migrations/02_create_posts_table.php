@@ -9,6 +9,7 @@ $db->connection->exec("
         `title` varchar(255) NOT NULL,
         `body` text NOT NULL,
         `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+        `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (`id`),
         KEY `user_id` (`user_id`),
         CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE

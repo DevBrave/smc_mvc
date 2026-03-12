@@ -8,22 +8,27 @@ use Core\Request;
 
 class CommentController
 {
-    
+    protected Comment $comment;
+
+    public function __construct(Comment $comment)
+    {
+        $this->comment = $comment;
+    }
+
     public function index()
     {
-        $comments = Comment::all();
-        view('admin/comments/index.view.php',[
+        $comments = $this->comment->all();
+        view('admin/comments/index.view.php', [
             'comments' => $comments,
+            'commentModel' => $this->comment,
         ]);
     }
 
-    public function update(){
+    public function update()
+    {
 
         $attributes = Request::all();
-        Comment::updateStatus($attributes);
+        $this->comment->updateStatus($attributes);
         redirect("/admin/comments");
     }
-
-
-
 }

@@ -38,7 +38,6 @@ class Container
 
     public function make(string $class)
     {
-        dd($class);
         if (!class_exists($class)) {
             throw new \Exception("Class {$class} does not exist and no binding was found.");
         }

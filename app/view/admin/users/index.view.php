@@ -10,7 +10,9 @@ layout('admin/header.php'); ?>
         <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
-                <div class="col-sm-6"><h3 class="mb-0">Tags</h3></div>
+                <div class="col-sm-6">
+                    <h3 class="mb-0">Tags</h3>
+                </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -30,54 +32,57 @@ layout('admin/header.php'); ?>
             <!--begin::Row-->
             <div class="row">
                 <div class="card mb-4">
-                    <div class="card-header"><h3 class="card-title">Registered User</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">Registered User</h3>
+                    </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table class="table table-bordered">
                             <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Bio</th>
-                                <th>Role</th>
-                                <th>Action</th>
-                                <th>Registered IN</th>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Bio</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                    <th>Registered IN</th>
 
-                            </tr>
+                                </tr>
                             </thead>
                             <tbody>
-                            <?php $i = 1;
-                            foreach ($users as $user): ?>
-                                <tr class="align-middle">
-                                    <td>
-                                        <?= $i ?>
-                                    </td>
-                                    <td>
-                                        <?= ucwords($user['first_name']) . ' ' . ucwords($user['last_name']) ?>
-                                    </td>
-                                    <td>
-                                        <?= $user['username'] ?>
-                                    </td>
-                                    <td>
-                                        <?= $user['email'] ?>
-                                    </td>
-                                    <td>
-                                        <?= truncateText($user['bio'],20) ?>
-                                    </td>
-                                    <td>
-                                        <?= $user['role'] == 'admin' ? '<span class="badge bg-primary">Admin</span>' : $user['role'] ?>
-                                    </td>
-                                    <td>
+                                <?php $i = 1;
+                                foreach ($users as $user): ?>
+                                    <tr class="align-middle">
+                                        <td>
+                                            <?= $i ?>
+                                        </td>
+                                        <td>
+                                            <?= ucwords($user['first_name']) . ' ' . ucwords($user['last_name']) ?>
+                                        </td>
+                                        <td>
+                                            <?= $user['username'] ?>
+                                        </td>
+                                        <td>
+                                            <?= $user['email'] ?>
+                                        </td>
+                                        <td>
+                                            <?= truncateText($user['bio'], 20) ?>
+                                        </td>
+                                        <td>
+                                            <?= $user['role'] == 'admin' ? '<span class="badge bg-primary">Admin</span>' : $user['role'] ?>
+                                        </td>
+                                        <td>
                                             <a href="/admin/user/edit/<?= $user['username'] ?>" class="btn btn-warning px-1 py-1">Edit
                                             </a>
-                                    </td>
-                                    <td>
-                                        <?= date("F jS, Y h:i", strtotime($user['reg_date'])) ?>
-                                    </td>
-                                </tr>
-                                <?php $i++; endforeach; ?>
+                                        </td>
+                                        <td>
+                                            <?= date("F jS, Y h:i", strtotime($user['created_at'])) ?>
+                                        </td>
+                                    </tr>
+                                <?php $i++;
+                                endforeach; ?>
                             </tbody>
                         </table>
                     </div>

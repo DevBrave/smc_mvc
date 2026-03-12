@@ -8,28 +8,35 @@ use Core\Request;
 
 class TagController
 {
+
+    protected Tag $tag;
+
+    public function __construct(Tag $tag)
+    {
+        $this->tag = $tag;
+    }
+
     public function index()
     {
-        $tags = Tag::all();
-        view('admin/tags/index.view.php',[
+        $tags = $this->tag->all();
+        view('admin/tags/index.view.php', [
             'tags' => $tags,
+            'tagModel' => $this->tag,
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
 
         view('admin/tags/create.view.php');
     }
-    public function store(){
 
+    public function store()
+    {
         $attributes = Request::all();
 
-        Tag::findOrCreate($attributes['name']);
+        $this->tag->findOrCreate($attributes['name']);
 
         redirect("/admin/tags");
     }
-
-
-
-
 }

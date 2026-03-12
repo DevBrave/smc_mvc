@@ -2,7 +2,10 @@
 
 /** @var \Core\Database $db */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+
+
+require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer
+
 
 $faker = Faker\Factory::create();
 

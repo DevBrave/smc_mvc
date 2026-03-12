@@ -1,6 +1,7 @@
 <?php
 
 namespace Core;
+
 use App\Controllers\HomeController;
 
 class Router
@@ -19,28 +20,24 @@ class Router
     {
         $this->add($uri, $controller, 'POST');
         return $this;
-
     }
 
     public function patch($uri, $controller)
     {
         $this->add($uri, $controller, 'PATCH');
         return $this;
-
     }
 
     public function put($uri, $controller)
     {
         $this->add($uri, $controller, 'PUT');
         return $this;
-
     }
 
     public function delete($uri, $controller)
     {
         $this->add($uri, $controller, 'DELETE');
         return $this;
-
     }
 
     public function add($uri, $controller, $method)
@@ -52,7 +49,6 @@ class Router
             'method' => $method,
             'middleware' => '',
         ];
-
     }
 
     public function all_routes()
@@ -74,19 +70,19 @@ class Router
                 $middleware = (require(base_path('config.php')))['middleware'];
                 foreach ($middleware as $key => $mdl) {
                     if ((is_array($route['middleware']) && in_array($key, $route['middleware']))
-                        || (!is_array($route['middleware']) && $key === $route['middleware'])) {
+                        || (!is_array($route['middleware']) && $key === $route['middleware'])
+                    ) {
                         if (method_exists($mdl, 'handle')) {
                             $mdl::handle();
                         }
-
                     }
                 }
 
-                
+
                 // Resolve the full namespaced class name
                 $fullClassName = $this->resolveControllerClass($class);
                 // Call method with matched parameters
-                $controllerInstance = new $fullClassName();
+                $controllerInstance = App::resolve($fullClassName);
                 call_user_func_array([$controllerInstance, $controllerMethod], $matches);
                 exit;
             }
@@ -100,7 +96,7 @@ class Router
         $this->routes[$lastIndex]['middleware'] = $middleware;
         return $this;
     }
-    
+
     private function resolveControllerClass($class)
     {
         // Handle different namespace patterns
@@ -112,6 +108,4 @@ class Router
             return 'App\\Controllers\\' . $class;
         }
     }
-
-
 }

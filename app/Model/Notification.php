@@ -8,7 +8,7 @@ use Core\Database;
 class Notification
 {
 
-    protected $connection = [];
+    protected $connection;
     protected $table = 'notificaitons';
     public  $credentials = [
         'type',
@@ -22,14 +22,14 @@ class Notification
         'cnt',
     ];
 
-    public function __construct()
-    {
-        $this->connection = App::resolve(Database::class);
-    }
+    public function __construct(
+        protected Database $db,
 
-    public static function create(array $data): int
+    ) {}
+
+    public function create(array $data): int
     {
-         return App::resolve(Database::class)->query("INSERT INTO notifications 
+        return $this->db->query("INSERT INTO notifications 
                 (type,actor_id,last_actor_id,object_type,object_id,context_type,context_id,group_key,cnt)
                 VALUES
                  (:type,:a_id,:last_a_id,:obj_type,:obj_id,:context_type,:context_id,:group_key,:cnt);", [
@@ -45,35 +45,30 @@ class Notification
         ])->lastId();
     }
 
-    public static function bump(int $id, int $actorId): void
+    public function bump(int $id, int $actorId): void
     {
 
-         App::resolve(Database::class)->query("UPDATE notifications SET cnt = cnt + 1,last_actor_id = :actorId,updated_at = NOW() WHERE id = :id", [
+        $this->db->query("UPDATE notifications SET cnt = cnt + 1,last_actor_id = :actorId,updated_at = NOW() WHERE id = :id", [
             'actorId' => $actorId,
             'id' => $id
         ]);
-
-
     }
 
     public function decrement(int $id): void
     {
-        App::resolve(Database::class)->query("UPDATE notifications SET cnt = cnt - 1 WHERE id = :id", [
+        $this->db->query("UPDATE notifications SET cnt = cnt - 1 WHERE id = :id", [
             'id' => $id
         ]);
     }
 
-    public static function findGroupKeyIfExists($group_key, $object_id)
+    public function findGroupKeyIfExists($group_key, $object_id)
     {
-        return App::resolve(Database::class)->query("SELECT id, cnt, last_actor_id, updated_at
+        return $this->db->query("SELECT id, cnt, last_actor_id, updated_at
                 FROM notifications
                 WHERE group_key = :gk AND object_id = :obj
                 LIMIT 1", [
             'gk' => $group_key,
             'obj' => $object_id
         ])->fetch();
-
     }
-
-
 }

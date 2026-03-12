@@ -8,7 +8,8 @@ class GuestMiddleware implements MiddlewareInterface
 {
     public static function handle()
     {
-        if (isset($_SESSION['user'])) {
+
+        if (auth()->check()) {
             // user has already logged in
             redirect('/');
         }

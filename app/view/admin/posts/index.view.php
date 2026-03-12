@@ -12,7 +12,9 @@ layout('admin/header.php'); ?>
         <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
-                <div class="col-sm-6"><h3 class="mb-0">Simple Tables</h3></div>
+                <div class="col-sm-6">
+                    <h3 class="mb-0">Simple Tables</h3>
+                </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -32,47 +34,51 @@ layout('admin/header.php'); ?>
             <!--begin::Row-->
             <div class="row">
                 <div class="card mb-4">
-                    <div class="card-header"><h3 class="card-title">All Posts</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">All Posts</h3>
+                    </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table class="table table-bordered">
                             <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Title</th>
-                                <th>Body</th>
-                                <th>By</th>
-                                <th>Created At</th>
-                                <th>Last Update</th>
-                            </tr>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Title</th>
+                                    <th>Body</th>
+                                    <th>By</th>
+                                    <th>Created At</th>
+                                    <th>Last Update</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <?php $i = 1; foreach ($posts as $post): ?>
-                                <tr class="align-middle">
-                                    <td>
-                                        <?= $i  ?>
-                                    </td>
-                                    <td>
-                                        <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
-                                           href="/post/<?= $post['id'] ?>" > <?= ucwords($post['title']) ?></a>
-                                    </td>
-                                    <td>
-                                        <?= truncateText($post['body'],50) ?>
-                                    </td>
-                                    <td>
-                                        @<?= Post::post_created_by($post['id']) ?>
+                                <?php $i = 1;
+                                foreach ($posts as $post): ?>
+                                    <tr class="align-middle">
+                                        <td>
+                                            <?= $i  ?>
+                                        </td>
+                                        <td>
+                                            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                                href="/post/<?= $post['id'] ?>"> <?= ucwords($post['title']) ?></a>
+                                        </td>
+                                        <td>
+                                            <?= truncateText($post['body'], 50) ?>
+                                        </td>
+                                        <td>
+                                            @<?= $post_model->post_created_by($post['id']) ?>
 
-                                    </td>
-                                    <td>
-                                        <?= date("F jS", strtotime($post['created_at'])) ?>
+                                        </td>
+                                        <td>
+                                            <?= date("F jS", strtotime($post['created_at'])) ?>
 
-                                    </td>
-                                    <td>
-                                        <?= date("F jS, Y h:i", strtotime($post['updated_at'])) ?>
+                                        </td>
+                                        <td>
+                                            <?= date("F jS, Y h:i", strtotime($post['updated_at'])) ?>
 
-                                    </td>
-                                </tr>
-                            <?php $i++;  endforeach; ?>
+                                        </td>
+                                    </tr>
+                                <?php $i++;
+                                endforeach; ?>
                             </tbody>
                         </table>
                     </div>

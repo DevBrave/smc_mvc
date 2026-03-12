@@ -1,15 +1,7 @@
 <?php
 
-use App\Model\Comment;
-use App\Model\Follow;
-use App\Model\LikeComment;
-use App\Model\LikePost;
-use App\Model\Tag;
-use App\Model\User;
-
 layout('header.php');
-$owner = User::find($post['user_id']);
-
+$owner = $userModel->find($post['user_id']);
 ?>
 
 <?php
@@ -46,8 +38,8 @@ layout('nav.php');
             </p>
             <p class="leading-relaxed">
                 <?php foreach ($tags as $tag): ?>
-                    <a href="/tag/<?= Tag::findById($tag['tag_id'])['slug'] ?>" class="text-blue-500">
-                        <?= '#' . Tag::findById($tag['tag_id'])['slug'] ?>
+                    <a href="/tag/<?= $tagModel->findById($tag['tag_id'])['slug'] ?>" class="text-blue-500">
+                        <?= '#' . $tagModel->findById($tag['tag_id'])['slug'] ?>
                     </a>
 
                 <?php endforeach; ?>
@@ -57,15 +49,15 @@ layout('nav.php');
                 <form action="/like/store" method="POST">
                     <?= csrf_input() ?>
                     <input type="hidden" name="user_id"
-                        value="<?= $user['id'] ?>">
+                        value="<?= $currentUser['id'] ?? '' ?>">
                     <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
                     <button type="submit"
-                        class="inline-flex items-center px-3 py-1.5 <?= LikePost::hasLiked($post['id'], $user['id']) ? 'bg-red-500' : 'bg-red-200' ?> text-white text-sm font-medium shadow-md rounded hover:bg-red-700 transition">
-                        ❤️ <?= LikePost::like_count($post['id']) == 0 ? '' : LikePost::like_count($post['id']) ?>
+                        class="inline-flex items-center px-3 py-1.5 <?= $likePostModel->hasLiked($post['id'], $currentUser['id'] ?? null) ? 'bg-red-500' : 'bg-red-200' ?> text-white text-sm font-medium shadow-md rounded hover:bg-red-700 transition">
+                        ❤️ <?= $likePostModel->like_count($post['id']) == 0 ? '' : $likePostModel->like_count($post['id']) ?>
                     </button>
                 </form>
 
-                <?php if ($post['user_id'] == $user['id']): ?>
+                <?php if (isset($currentUser['id']) && $post['user_id'] == $currentUser['id']): ?>
                     <a href="/post/edit/<?= $post['id'] ?>"
                         class="inline-flex rounded bg-indigo-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-indigo-700 transition duration-200">
                         Edit
@@ -80,33 +72,35 @@ layout('nav.php');
                     </form>
                 <?php endif; ?>
                 <?php
-                $followButtonState = Follow::getFollowState($user['id'], $owner['id']);
-                switch ($followButtonState):
-                    case 'can_follow': ?>
-                        <form action="/user/<?= $owner['id'] ?>/follow" method="POST">
-                            <?= csrf_input() ?>
-                            <button type="submit"
-                                class="inline-flex rounded bg-blue-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200">
-                                Follow
+                if (isset($currentUser['id'])) {
+                    $followButtonState = $followModel->getFollowState($currentUser['id'], $owner['id']);
+                    switch ($followButtonState):
+                        case 'can_follow': ?>
+                            <form action="/user/<?= $owner['id'] ?>/follow" method="POST">
+                                <?= csrf_input() ?>
+                                <button type="submit"
+                                    class="inline-flex rounded bg-blue-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200">
+                                    Follow
+                                </button>
+                            </form>
+                        <?php break;
+                        case 'following': ?>
+                            <form action="/user/<?= $owner['id'] ?>/unfollow" method="POST">
+                                <?= csrf_input() ?>
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit"
+                                    class="inline-flex rounded bg-blue-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200">
+                                    Unfollow
+                                </button>
+                            </form>
+                        <?php break;
+                        case 'pending': ?>
+                            <button disabled
+                                class="inline-flex rounded bg-gray-300 px-3 py-1.5 text-white text-sm font-semibold">
+                                Requested...
                             </button>
-                        </form>
-                    <?php break;
-                    case 'following': ?>
-                        <form action="/user/<?= $owner['id'] ?>/unfollow" method="POST">
-                            <?= csrf_input() ?>
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit"
-                                class="inline-flex rounded bg-blue-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-blue-700 transition duration-200">
-                                Unfollow
-                            </button>
-                        </form>
-                    <?php break;
-                    case 'pending': ?>
-                        <button disabled
-                            class="inline-flex rounded bg-gray-300 px-3 py-1.5 text-white text-sm font-semibold">
-                            Requested...
-                        </button>
-                <?php endswitch; ?>
+                    <?php endswitch;
+                } ?>
 
             </div>
 
@@ -121,7 +115,7 @@ layout('nav.php');
                 <form action="/comment/store" method="POST" class="space-y-3">
                     <?= csrf_input() ?>
                     <input type="hidden" name="user_id"
-                        value="<?= $user['id'] ?>">
+                        value="<?= $currentUser['id'] ?? '' ?>">
                     <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
                     <input type="hidden" name="parent_id">
                     <label for="body" class="block text-sm font-medium text-gray-700">Add a comment</label>
@@ -136,18 +130,20 @@ layout('nav.php');
             </div>
 
             <?php foreach ($comments as $comment) : ?>
-                <?php if ($comment['parent_id'] == 0) : ?>
+
+                <?php if ($comment['parent_id'] == NULL) : ?>
                     <!-- Comment -->
                     <div class="flex items-start gap-3 py-4 px-4 border-b border-gray-200">
                         <!-- Avatar -->
-                        <img src="/<?= (User::find($comment['user_id']))['avatar'] ?>" alt="avatar"
+                        <img src="/<?= ($userModel->find($comment['user_id']))['avatar'] ?>" alt="avatar"
                             class="w-10 h-10 rounded-full object-cover">
 
                         <!-- Comment Content -->
                         <div class="flex-1">
                             <!-- Main comment -->
                             <div class="text-sm text-gray-800">
-                                <span class="font-semibold mr-1"><?= (User::find($comment['user_id']))['username'] ?></span>
+                                <span class="font-semibold mr-1"><?= ($userModel->find($comment['user_id']))['username'] ?></span>
+                                <br>
                                 <?= htmlspecialchars($comment['body']) ?>
                             </div>
 
@@ -159,7 +155,7 @@ layout('nav.php');
                                 <form action="/comment/store" method="POST" class="space-y-2">
                                     <?= csrf_input(); ?>
                                     <input type="hidden" name="user_id"
-                                        value="<?= $user['id'] ?>">
+                                        value="<?= $currentUser['id'] ?? '' ?>">
                                     <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
                                     <input type="hidden" name="parent_id" value="<?= $comment['id'] ?>">
                                     <textarea name="body" rows="2" placeholder="Write your reply..."
@@ -177,11 +173,11 @@ layout('nav.php');
                                 foreach ($comments as $reply) : ?>
                                     <?php if ($reply['parent_id'] == $comment['id'] || in_array($reply['parent_id'], array_column(array_filter($comments, fn($c) => $c['parent_id'] == $comment['id']), 'id'))) : ?>
                                         <div class="flex items-start gap-3 mb-3">
-                                            <img src="/<?= (User::find($reply['user_id']))['avatar'] ?>"
+                                            <img src="/<?= ($userModel->find($reply['user_id']))['avatar'] ?>"
                                                 class="w-8 h-8 rounded-full object-cover" alt="reply avatar">
                                             <div class="text-xs text-gray-800">
-                                                <span class="font-semibold mr-1"><?= (User::find($reply['user_id']))['username'] ?></span>
-                                                <?= '<a class="text-blue-500">@' . User::find(Comment::findById($reply['parent_id'])['user_id'])['username'] . '</a> ' . htmlspecialchars($reply['body']) ?>
+                                                <span class="font-semibold mr-1"><?= ($userModel->find($reply['user_id']))['username'] ?></span>
+                                                <?= '<a class="text-blue-500">@' . $userModel->find($commentModel->findById($reply['parent_id'])['user_id'])['username'] . '</a> ' . htmlspecialchars($reply['body']) ?>
                                             </div>
                                             <div class="text-xs text-gray-500 mt-1 flex items-center gap-3">
                                                 <button onclick="toggleReply(this)" class="hover:underline">Reply
@@ -191,7 +187,7 @@ layout('nav.php');
                                                 <form action="/comment/store" method="POST" class="space-y-2">
                                                     <?= csrf_input(); ?>
                                                     <input type="hidden" name="user_id"
-                                                        value="<?= $user['id'] ?>">
+                                                        value="<?= $currentUser['id'] ?? '' ?>">
                                                     <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
                                                     <input type="hidden" name="parent_id"
                                                         value="<?= $reply['id'] ?>">
@@ -206,12 +202,12 @@ layout('nav.php');
                                             <div class="flex flex-col items-center ml-2">
                                                 <form action="/comment/like/store" method="POST">
                                                     <?= csrf_input() ?>
-                                                    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                                    <input type="hidden" name="user_id" value="<?= $currentUser['id'] ?? '' ?>">
                                                     <input type="hidden" name="comment_id"
                                                         value="<?= $reply['id'] ?>">
                                                     <button type="submit"
-                                                        class="inline-flex items-center px-1 py-0.5 <?= LikeComment::hasLiked($reply['id'], $user['id']) ? 'bg-red-400' : 'bg-red-200' ?> text-white text-sm font-medium shadow-md rounded hover:bg-red-700 transition">
-                                                        ❤️ <?= LikeComment::like_count($reply['id']) == 0 ? '' : LikeComment::like_count($reply['id']) ?>
+                                                        class="inline-flex items-center px-1 py-0.5 <?= $likeCommentModel->hasLiked($reply['id'], $currentUser['id'] ?? null) ? 'bg-red-400' : 'bg-red-200' ?> text-white text-sm font-medium shadow-md rounded hover:bg-red-700 transition">
+                                                        ❤️ <?= $likeCommentModel->like_count($reply['id']) == 0 ? '' : $likeCommentModel->like_count($reply['id']) ?>
                                                     </button>
                                                 </form>
                                             </div>
@@ -227,11 +223,12 @@ layout('nav.php');
                         <div class="flex flex-col items-center ml-2">
                             <form action="/comment/like/store" method="POST">
                                 <?= csrf_input() ?>
-                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                <input type="hidden" name="user_id" value="<?= $currentUser['id'] ?? '' ?>">
                                 <input type="hidden" name="comment_id" value="<?= $comment['id'] ?>">
+                                <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
                                 <button type="submit"
-                                    class="inline-flex items-center px-1 py-0.5 <?= LikeComment::hasLiked($comment['id'], $user['id']) ? 'bg-red-400' : 'bg-red-200' ?> text-white text-sm font-medium shadow-md rounded hover:bg-red-700 transition">
-                                    ❤️ <?= LikeComment::like_count($comment['id']) == 0 ? '' : LikeComment::like_count($comment['id']) ?>
+                                    class="inline-flex items-center px-1 py-0.5 <?= $likeCommentModel->hasLiked($comment['id'], $currentUser['id'] ?? null) ? 'bg-red-400' : 'bg-red-200' ?> text-white text-sm font-medium shadow-md rounded hover:bg-red-700 transition">
+                                    ❤️ <?= $likeCommentModel->like_count($comment['id']) == 0 ? '' : $likeCommentModel->like_count($comment['id']) ?>
                                 </button>
                             </form>
                         </div>
