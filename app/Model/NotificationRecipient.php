@@ -2,12 +2,11 @@
 
 namespace App\Model;
 
-use Core\App;
+
 use Core\Database;
 
 class NotificationRecipient
 {
-
 
     protected $table = 'comments';
 
@@ -19,11 +18,11 @@ class NotificationRecipient
 
     public function insertAsUnread($notificationId, $userId, $groupKey)
     {
-
         $sql = "INSERT INTO notification_recipients (notification_id, user_id, group_key, read_at, created_at)
                 VALUES (:nid, :uid, :gk, NULL, NOW())
                 ON DUPLICATE KEY UPDATE read_at = NULL";
-        return $this->db->query(
+
+        $this->db->query(
             $sql,
             [
                 'nid' => $notificationId,
@@ -38,5 +37,12 @@ class NotificationRecipient
         return $this->db->query("select COUNT(*) from notification_recipients where user_id=:uid and read_at is null", [
             'uid' => $user_id
         ])->fetchCol();
+    }
+
+    public function userNotifications($user_id)
+    {
+        return $this->db->query("select * from notification_recipients where user_id=:uid", [
+            'uid' => $user_id,
+        ])->fetch();
     }
 }

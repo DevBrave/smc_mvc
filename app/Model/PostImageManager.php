@@ -15,12 +15,13 @@ class PostImageManager
 
     public function __construct(
         protected Database $db,
+        protected FileUploader $fileUploader,
     ) {}
 
     public function uploadImages($images)
     {
 
-        return FileUploader::multipleUpload($images, 'posts');
+        return $this->fileUploader->multipleUpload($images, 'posts');
     }
 
     public function attachImages($attributes)

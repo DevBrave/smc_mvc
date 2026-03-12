@@ -10,12 +10,13 @@ use Core\Validator;
 
 class AuthController
 {
-    protected User $user;
 
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+
+    public function __construct(
+        protected User $user,
+        protected Validator $validator,
+        protected FileUploader $fileUploader,
+    ) {}
 
 
     public function showRegisterForm()
@@ -37,14 +38,14 @@ class AuthController
         $attributes = Request::all();
         // this is for checking csrf
 
-//        if (!Validator::check_csrf($attributes['csrf_token'])) {
-//            dd('here');
-//        }
+        //        if (!$this->validator->check_csrf($attributes['csrf_token'])) {
+        //            dd('here');
+        //        }
         unset($_SESSION['flash_errors']);
 
 
 
-        Validator::validate([
+        $this->validator->validate([
 
             'email' => $attributes['email'],
             'username' => $attributes['username'],
@@ -59,19 +60,18 @@ class AuthController
             'last_name' => 'required|min:2',
         ]);
         $hasNewAvatar = false;
-        if ($this->user->hasNewAvatar($attributes['avatar'])){
+        if ($this->user->hasNewAvatar($attributes['avatar'])) {
             $hasNewAvatar = true;
-            FileUploader::validate($attributes['avatar'],'avatar');
+            $this->fileUploader->validate($attributes['avatar'], 'avatar');
         }
-        if ($hasNewAvatar){
+        if ($hasNewAvatar) {
 
-            $path = FileUploader::upload($attributes['avatar'],'avatar');
-
+            $path = $this->fileUploader->upload($attributes['avatar'], 'avatar');
         }
 
         $attributes['avatar'] = $path;
 
-        if (!Validator::confirmed($attributes['password'], $attributes['confirmation_password'])) {
+        if (!$this->validator->confirmed($attributes['password'], $attributes['confirmation_password'])) {
             $_SESSION['flash_errors']['password'] = 'Password confirmation does not match.';
             redirect('/register');
         }
@@ -79,7 +79,6 @@ class AuthController
         $this->user->create($attributes);
         unset($_SESSION['flash_errors']);
         redirect('/');
-
     }
 
 
@@ -89,13 +88,13 @@ class AuthController
         $attributes = Request::all();
 
         // this is for checking csrf - we have middle ware
-//        if (!Validator::check_csrf($_POST['csrf_token'])) {
-//            dd('here');
-//        }
+        //        if (!$this->validator->check_csrf($_POST['csrf_token'])) {
+        //            dd('here');
+        //        }
 
         unset($_SESSION['csrf_token']);
 
-        Validator::validate([
+        $this->validator->validate([
 
             'email' => $attributes['email'],
             'password' => $attributes['password'],
@@ -107,8 +106,6 @@ class AuthController
         $this->user->login($attributes);
         unset($_SESSION['flash_errors']);
         redirect('/');
-
-
     }
 
 
@@ -122,6 +119,4 @@ class AuthController
 
         redirect('/');
     }
-
 }
-

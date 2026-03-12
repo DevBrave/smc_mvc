@@ -9,14 +9,12 @@ use App\Model\Tag;
 
 class TagController
 {
-    protected Post $post;
-    protected Tag $tag;
 
-    public function __construct(Post $post, Tag $tag)
-    {
-        $this->post = $post;
-        $this->tag = $tag;
-    }
+
+    public function __construct(
+        protected Post $post,
+        protected Tag $tag
+    ) {}
 
     public function index()
     {

@@ -15,16 +15,16 @@ use Core\Validator;
 class UserController
 {
 
-    protected User $user;
-    protected Post $post;
-    protected Follow $follow;
 
-    public function __construct(User $user, Post $post, Follow $follow)
-    {
-        $this->user = $user;
-        $this->post = $post;
-        $this->follow = $follow;
-    }
+
+    public function __construct(
+        protected User $user,
+        protected Post $post,
+        protected Follow $follow,
+        protected NotificationRecipient $notifRecepientModel,
+        protected Validator $validator,
+        protected FileUploader $fileUploder,
+    ) {}
 
     public function profile($username)
     {
@@ -32,7 +32,7 @@ class UserController
         $post_count = $this->post->post_count($user['id']);
         $follower_count = $this->follow->follower_count($user['id']);
         $following_count = $this->follow->following_count($user['id']);
-        $notif_count = NotificationRecipient::unreadCount($user['id']);
+        $notif_count = $this->notifRecepientModel->unreadCount($user['id']);
         view('users/profile.view.php', [
             'user' => $user,
             'post_count' => $post_count,
@@ -56,7 +56,7 @@ class UserController
         $attributes = Request::all();
         $user = $this->user->find($attributes['id']);
 
-        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //        if (!$this->validator->check_csrf($attributes['csrf_token'])) {
         //            dd('here');
         //        }
 
@@ -83,16 +83,16 @@ class UserController
             $validationRules['username'] = 'unique:users';
         }
 
-        Validator::validate($validationFields, $validationRules);
+        $this->validator->validate($validationFields, $validationRules);
         $attributes['avatar'] = $user['avatar'];
 
         // check if we have new avatar
         if (isset($_FILES['avatar']) && is_uploaded_file($_FILES['avatar']['tmp_name'])) {
 
-            FileUploader::validate($_FILES['avatar'], 'avatar');
+            $this->fileUploder->validate($_FILES['avatar'], 'avatar');
 
 
-            $path = FileUploader::upload($_FILES['avatar'], 'avatar');
+            $path = $this->fileUploder->upload($_FILES['avatar'], 'avatar');
 
 
             $attributes['avatar'] = $path;
@@ -129,12 +129,11 @@ class UserController
     public function show_notifications($username)
     {
 
-        // $notifs = NotificationRecipient::hisNotifs(\username($username)['id']);
-        // view('users/show_notifications.view.php', [
-        //     'notifs' => $notifs,
-        //     'title' => 'Notifications'
-        // ]);
-
+        $notifs = $this->notifRecepientModel->userNotifications($this->user->findByUsername($username)['id']);
+        view('users/show_notifications.view.php', [
+            'notifs' => $notifs,
+            'title' => 'Notifications'
+        ]);
     }
 
     public function followings($username)

@@ -128,6 +128,7 @@ class User
 
     public  function isAdmin($username)
     {
+
         $user = $this->findByUsername($username);
         return ($user['role'] == 'admin');
     }

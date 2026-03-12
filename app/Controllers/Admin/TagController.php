@@ -9,12 +9,11 @@ use Core\Request;
 class TagController
 {
 
-    protected Tag $tag;
 
-    public function __construct(Tag $tag)
-    {
-        $this->tag = $tag;
-    }
+
+    public function __construct(
+        protected Tag $tag
+    ) {}
 
     public function index()
     {

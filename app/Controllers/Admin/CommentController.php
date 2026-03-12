@@ -8,12 +8,11 @@ use Core\Request;
 
 class CommentController
 {
-    protected Comment $comment;
 
-    public function __construct(Comment $comment)
-    {
-        $this->comment = $comment;
-    }
+
+    public function __construct(
+        protected Comment $comment
+    ) {}
 
     public function index()
     {

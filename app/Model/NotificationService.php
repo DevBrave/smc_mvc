@@ -51,13 +51,17 @@ class NotificationService
                 ]);
             } else {
                 // update cnt and last update
-                $this->notifModel->bump($existence['id'], $actor_id);
+                $notification_id = $existence['id'];
+                $this->notifModel->bump($notification_id, $actor_id);
             }
+
+
+
             foreach ($recipientIds as $rec_id) {
                 if ($actor_id == $rec_id) {
                     continue;
                 }
-                $this->notifRecipientModel->insertAsUnread($existence['id'], $rec_id, $group_key);
+                $this->notifRecipientModel->insertAsUnread($notification_id, $rec_id, $group_key);
             }
 
             $db_instant->commit();

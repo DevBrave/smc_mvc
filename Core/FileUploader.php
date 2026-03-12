@@ -5,12 +5,16 @@ namespace Core;
 class FileUploader
 {
 
-    public static function multipleUpload($file,$folder)
+    public function __construct(
+        protected Validator $validator,
+    ) {}
+
+    public  function multipleUpload($file, $folder)
     {
 
         $files_path = [];
         $image_path = [];
-        
+
         foreach ($file['name'] as $name) {
             // Create unique filename with proper extension
             $extension = pathinfo($name, PATHINFO_EXTENSION);
@@ -32,48 +36,43 @@ class FileUploader
                 redirect(previousurl());
             }
             $image_path[] = $files_path[$key];
-
-
         }
-            return $image_path;
+        return $image_path;
     }
 
-    public static function upload($file,$folder)
+    public  function upload($file, $folder)
     {
-            // Create unique filename with proper extension
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = uniqid($folder) . '.' . $extension;
-            $targetPath = upload_dir($folder) . '/' . $filename;
+        // Create unique filename with proper extension
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid($folder) . '.' . $extension;
+        $targetPath = upload_dir($folder) . '/' . $filename;
 
-            // Ensure upload directory exists
-            if (!is_dir(upload_dir($folder))) {
-                mkdir(upload_dir($folder), 0755, true);
-            }
+        // Ensure upload directory exists
+        if (!is_dir(upload_dir($folder))) {
+            mkdir(upload_dir($folder), 0755, true);
+        }
 
-            $files_path = $targetPath;
+        $files_path = $targetPath;
 
 
-            // Move uploaded file
-            if (!move_uploaded_file($file['tmp_name'], $files_path)) {
-                $_SESSION['flash_errors']['file'] = 'Failed to upload your file. Please try again.';
-                redirect(previousurl());
-            }
+        // Move uploaded file
+        if (!move_uploaded_file($file['tmp_name'], $files_path)) {
+            $_SESSION['flash_errors']['file'] = 'Failed to upload your file. Please try again.';
+            redirect(previousurl());
+        }
 
 
         return $files_path;
     }
 
 
-    public static function validate($file,$field)
+    public  function validate($file, $field)
     {
-        return Validator::validate([
+        return $this->validator->validate([
             $field => $file
-        ],[
-            $field  => "file_uploaded|valid_file_type|max_file_size:".Config::MAX_FILE_SIZE,
+        ], [
+            $field  => "file_uploaded|valid_file_type|max_file_size:" . Config::MAX_FILE_SIZE,
 
         ]);
-
-
     }
-
 }

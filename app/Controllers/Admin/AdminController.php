@@ -11,18 +11,14 @@ use App\Model\User;
 class AdminController
 {
 
-    protected Auth $auth;
-    protected User $user;
-    protected Comment $commentModel;
-    protected LikePost $likePostModel;
 
-    public function __construct(Auth $auth, User $user, Comment $commentModel, LikePost $likePostModel)
-    {
-        $this->auth = $auth;
-        $this->user = $user;
-        $this->commentModel = $commentModel;
-        $this->likePostModel = $likePostModel;
-    }
+
+    public function __construct(
+        protected Auth $auth,
+        protected User $user,
+        protected Comment $commentModel,
+        protected LikePost $likePostModel
+    ) {}
 
     public function dashboard()
     {

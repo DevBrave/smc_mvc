@@ -10,12 +10,12 @@ use Core\Validator;
 class UserController
 {
 
-    protected User $user;
 
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+
+    public function __construct(
+        protected User $user,
+        protected Validator $validator,
+    ) {}
 
     public function index()
     {
@@ -39,7 +39,7 @@ class UserController
         $user = $this->user->findByUsername($attributes['username']);
         $attributes['id'] = $user['id'];
 
-        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //        if (!$this->validator->check_csrf($attributes['csrf_token'])) {
         //            dd('here');
         //        }
 
@@ -63,7 +63,7 @@ class UserController
             $validationRules['username'] = 'unique:users';
         }
 
-        Validator::validate($validationFields, $validationRules);
+        $this->validator->validate($validationFields, $validationRules);
         $this->user->updateByAdmin($attributes);
 
         unset($_SESSION['flash_errors']);

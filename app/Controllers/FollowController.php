@@ -11,7 +11,7 @@ use App\Model\User;
 class FollowController
 {
     public function __construct(
-        protected Follow $follow,
+        protected Follow $followModel,
         protected User $user,
         protected NotificationService $notifService,
     ) {}
@@ -22,8 +22,9 @@ class FollowController
         $followed_id = $id;
 
 
+
         // has the follower_id followed the followed_id
-        if ($this->follow->has_followed($follower_id, $followed_id)) {
+        if ($this->followModel->has_followed($follower_id, $followed_id)) {
             // an error
             redirect(previousurl());
         }
@@ -42,14 +43,14 @@ class FollowController
 
         if ($this->user->find($followed_id)['status'] == 'private') {
 
-            $this->follow->follow($follower_id, $followed_id, 'pending');
+            $this->followModel->follow($follower_id, $followed_id, 'pending');
 
             $this->notifService->createOrBump('follow_request', [$followed_id], $follower_id, 'user', $followed_id);
             redirect(previousurl());
         }
 
 
-        $this->follow->follow($follower_id, $followed_id, 'accepted');
+        $this->followModel->follow($follower_id, $followed_id, 'accepted');
 
         $this->notifService->createOrBump('follow', [$followed_id], $follower_id, 'user', $followed_id);
         redirect(previousurl());
@@ -62,9 +63,9 @@ class FollowController
 
 
         // has the follower_id followed the followed_id
-        if ($this->follow->has_followed($follower_id, $followed_id)) {
+        if ($this->followModel->has_followed($follower_id, $followed_id)) {
             // if is not -> insert
-            $this->follow->unfollow($follower_id, $followed_id);
+            $this->followModel->unfollow($follower_id, $followed_id);
         }
 
 

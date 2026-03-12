@@ -19,29 +19,22 @@ use Core\Validator;
 
 class PostController
 {
-    protected Database $db;
-    protected PostService $postService;
-    protected Post $post;
-    protected User $user;
-    protected Comment $comment;
-    protected LikePost $likePost;
-    protected Tag $tag;
-    protected LikeComment $likeComment;
-    protected Follow $follow;
 
-    public function __construct(Database $db, PostService $postService, Post $post, User $user, Comment $comment, LikePost $likePost, Tag $tag, LikeComment $likeComment, Follow $follow)
-    {
 
-        $this->db = $db;
-        $this->postService = $postService;
-        $this->post = $post;
-        $this->user = $user;
-        $this->comment = $comment;
-        $this->likePost = $likePost;
-        $this->tag = $tag;
-        $this->likeComment = $likeComment;
-        $this->follow = $follow;
-    }
+    public function __construct(
+        protected Database $db,
+        protected PostService $postService,
+        protected Post $post,
+        protected User $user,
+        protected Comment $comment,
+        protected LikePost $likePost,
+        protected Tag $tag,
+        protected LikeComment $likeComment,
+        protected Follow $follow,
+        protected PostImageManager $postImageManagerModel,
+        protected Validator $validator,
+        protected FileUploader $fileUploder,
+    ) {}
 
     public function index()
     {
@@ -64,7 +57,7 @@ class PostController
     {
         $post = $this->post->find($id);
         $comments = $this->comment->findByPostId($post['id']);
-        $images = (PostImageManager::getImageByPostId($post['id'])) ?? null;
+        $images = ($this->postImageManagerModel->getImageByPostId($post['id'])) ?? null;
         $currentUser = isset($_SESSION['user']) ? ($this->user->findByUsername($_SESSION['user'])) : ['id' => null];
         $tags = $this->tag->tag_associated($post['id']);
 
@@ -96,7 +89,7 @@ class PostController
     public function store()
     {
         $attributes = Request::all();
-        Validator::validate([
+        $this->validator->validate([
             'title' => $attributes['title'],
             'body' => $attributes['body'],
         ], [
@@ -110,9 +103,9 @@ class PostController
         }
 
         $hasImages = false;
-        if (PostImageManager::hasNewImage($attributes['images'])) {
+        if ($this->postImageManagerModel->hasNewImage($attributes['images'])) {
             $hasImages = true;
-            FileUploader::validate($attributes['images'], 'images');
+            $this->fileUploder->validate($attributes['images'], 'images');
         }
 
         try {
@@ -127,7 +120,7 @@ class PostController
 
     public function destroy($id)
     {
-        $images = (PostImageManager::getImageByPostId($id));
+        $images = ($this->postImageManagerModel->getImageByPostId($id));
         foreach ($images as $img) {
 
             if (file_exists($img['path'])) {
@@ -143,14 +136,15 @@ class PostController
     public function edit($id)
     {
         $post = $this->post->find($id);
-        $images = (PostImageManager::getImageByPostId($post['id'])) ?? null;
+        $images = ($this->postImageManagerModel->getImageByPostId($post['id'])) ?? null;
         $tags = $this->tag->tag_associated($post['id'], 'tag_id');
 
 
         view('posts/edit.view.php', [
             'post' => $post,
             'images' => $images,
-            'tags' => $tags
+            'tags' => $tags,
+            'all_tags' => $this->tag->all(),
         ]);
     }
 
@@ -159,7 +153,7 @@ class PostController
     {
         $attributes = Request::all();
 
-        Validator::validate([
+        $this->validator->validate([
             'title' => $attributes['title'],
             'body' => $attributes['body'],
         ], [
@@ -174,14 +168,14 @@ class PostController
 
         $hasNewImage = false;
         $paths = [];
-        if (PostImageManager::hasNewImage($attributes['images'])) {
+        if ($this->postImageManagerModel->hasNewImage($attributes['images'])) {
             $hasNewImage = true;
-            FileUploader::validate($attributes['images'], 'images');
+            $this->fileUploder->validate($attributes['images'], 'images');
         }
 
         // add new images
         if ($hasNewImage) {
-            $paths = PostImageManager::uploadImages($attributes['images']);
+            $paths = $this->postImageManagerModel->uploadImages($attributes['images']);
         }
 
 
@@ -189,9 +183,9 @@ class PostController
 
         if ($hasNewImage) {
 
-            PostImageManager::deleteAttachedImages($post_id);
+            $this->postImageManagerModel->deleteAttachedImages($post_id);
 
-            PostImageManager::updateAttachedImages([
+            $this->postImageManagerModel->updateAttachedImages([
                 'post_id' => $post_id,
                 'images' => $paths
             ]);

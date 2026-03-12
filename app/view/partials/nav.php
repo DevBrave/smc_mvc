@@ -81,12 +81,15 @@ $user = auth()->user();
                     </div>
 
                 </div>
-                <?php if (auth()->check()): ?>
+                <?php
+                if (auth()->check()): ?>
                     <div class="relative ml-3">
                         <a class="button text-base/3 px-3 py-2 text-sm text-white"
                             href="/user/<?= ($user['username']) ?>">Your Account</a>
                     </div>
-                    <?php if (auth()->isAdmin()): ?>
+                    <?php
+
+                    if (auth()->isAdmin()): ?>
                         <div class="relative ml-3">
                             <a class="button text-base/3 px-3 py-2 text-sm text-white"
                                 href="/admin">Admin Panel</a>

@@ -33,6 +33,7 @@ class Auth
     public function isAdmin()
     {
         if (!$this->check()) return false;
+
         return $this->user->isAdmin($_SESSION['user']);
     }
 

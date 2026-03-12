@@ -1,39 +1,46 @@
 <?php
 
 namespace Core;
+
 class Validator
 {
 
+
     public $errors = [];
 
-    public static function username($data): bool
-    {
 
-        $trimmed_data = $data;
-        if (!self::check_regex('username', $trimmed_data)) {
+    public function __construct(
+        protected Database $db,
+    ) {}
 
-            return false;
-        }
+    // public function username($data): bool
+    // {
 
-        return true;
-    }
+    //     $trimmed_data = $data;
+    //     if (!$this->check_regex('username', $trimmed_data)) {
 
-    public static function password($password): bool
-    {
+    //         return false;
+    //     }
 
-        if (!self::string($password, 8)) {
-            return false;
-        }
-        return true;
-    }
+    //     return true;
+    // }
+
+    // public function password($password): bool
+    // {
+
+    //     if (!$this->string($password, 8)) {
+    //         return false;
+    //     }
+    //     return true;
+    // }
 
 
-    public static function confirmed($original, $repeat): bool
+    public function confirmed($original, $repeat): bool
     {
         return $original == $repeat;
     }
 
-    public static function email($email): bool
+    public function email($email): bool
     {
 
 
@@ -42,11 +49,9 @@ class Validator
         }
 
         return true;
-
-
     }
 
-    public static function check_csrf($token): bool
+    public function check_csrf($token): bool
     {
         $csrf_session = generate_csrf_token();
         if ($csrf_session != $token) {
@@ -55,7 +60,7 @@ class Validator
         return true;
     }
 
-    public static function required($data): bool
+    public function required($data): bool
     {
 
         if (strlen($data) == 0) {
@@ -65,11 +70,11 @@ class Validator
     }
 
 
-    public static function unique($data, $info): bool
+    public function unique($data, $info): bool
     {
 
         $query = "select * from {$info[0]} where {$info[1]}=:{$info[1]}";
-        $result = App::resolve(Database::class)->query($query, [
+        $result = $this->db->query($query, [
             $info[1] => $data
         ])->fetch();
 
@@ -78,10 +83,9 @@ class Validator
             return false;
         }
         return true;
-
     }
 
-    public static function formatValidationMessage($template, $params = [])
+    public function formatValidationMessage($template, $params = [])
     {
         foreach ($params as $key => $value) {
             $template = str_replace("{" . $key . "}", $value, $template);
@@ -89,7 +93,7 @@ class Validator
         return $template;
     }
 
-    public static function valid_file_type($files)
+    public function valid_file_type($files)
     {
 
         $allowed = ['image/jpeg', 'image/png', 'image/webp'];
@@ -108,11 +112,10 @@ class Validator
         }
 
         return true;
-
     }
 
 
-    public static function max_file_size($files, $size)
+    public function max_file_size($files, $size)
     {
 
         if (is_array($files['size'])) {
@@ -130,7 +133,7 @@ class Validator
         return true;
     }
 
-    public static function file_uploaded($files)
+    public function file_uploaded($files)
     {
         if (!isset($files)) {
             return false;
@@ -152,7 +155,7 @@ class Validator
         return true;
     }
 
-    public static function validate($data, $rules = [])
+    public function validate($data, $rules = [])
     {
 
         $errors = [];
@@ -185,21 +188,14 @@ class Validator
                     }
 
                     if (!$result) {
-                        $message = Validator::formatValidationMessage($main_rules[$method], ['field' => $field]);
+                        $message = $this->formatValidationMessage($main_rules[$method], ['field' => $field]);
                         $errors[$field] = $message;
                         break;
-
                     }
                 }
-
             }
             $_SESSION['flash_errors'] = $errors;
             redirect(previousurl());
-
         }
-
-
     }
-
-
 }

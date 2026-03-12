@@ -11,7 +11,8 @@ class Post
 
 
     public function __construct(
-        protected Database $db
+        protected Database $db,
+        protected User $user,
     ) {}
 
     public function all()
@@ -86,8 +87,7 @@ class Post
     public function post_created_by($post_id)
     {
         $post = $this->find($post_id);
-        $user = new User($this->db);
-        return $user->find($post['user_id'])['username'];
+        return $this->user->find($post['user_id'])['username'];
     }
 
     //    public static function search($tag, $limit)

@@ -19,6 +19,7 @@ class CommentController
         protected Post $post,
         protected Comment $comment,
         protected NotificationService $notifService,
+        protected Validator $validator,
     ) {}
 
 
@@ -27,7 +28,7 @@ class CommentController
         $attributes = Request::all();
         $post_owner = $this->post->find($attributes['post_id']);
         // this is for checking csrf
-        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //        if (!$this->validator->check_csrf($attributes['csrf_token'])) {
         //            dd('here');
         //        }
         if ($attributes['user_id'] == null) {
@@ -36,7 +37,7 @@ class CommentController
         }
         unset($_SESSION['csrf_token']);
 
-        Validator::validate([
+        $this->validator->validate([
             'body' => $attributes['body'],
         ], [
             'body' => 'required|max:500',
@@ -94,7 +95,7 @@ class CommentController
         $attributes = Request::all();
 
         // this is for checking csrf
-        //        if (!Validator::check_csrf($attributes['csrf_token'])) {
+        //        if (!$this->validator->check_csrf($attributes['csrf_token'])) {
         //            dd('here');
         //        }
 
@@ -102,7 +103,7 @@ class CommentController
         //        unset($_SESSION['csrf_token']);
 
 
-        Validator::validate([
+        $this->validator->validate([
             'title' => $attributes['title'],
             'body' => $attributes['body'],
         ], [

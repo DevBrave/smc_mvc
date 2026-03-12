@@ -7,18 +7,17 @@ use Core\Database;
 class Follow
 {
 
-    protected $connection;
+
     protected $table = 'follows';
 
-    public function __construct(Database $connection)
-    {
-        $this->connection = $connection;
-    }
+    public function __construct(
+        protected Database $db
+    ) {}
 
 
     public function follow($follower_id, $followed_id, $status)
     {
-        $this->connection->query("insert into {$this->table} (follower_id,following_id,status)  values (:follower_id,:following_id,:status)", [
+        $this->db->query("insert into {$this->table} (follower_id,following_id,status)  values (:follower_id,:following_id,:status)", [
             'follower_id' => $follower_id,
             'following_id' => $followed_id,
             'status' => $status
@@ -28,7 +27,7 @@ class Follow
 
     public function unfollow($follower_id, $followed_id)
     {
-        $this->connection->query("delete from {$this->table} where follower_id=:follower_id and following_id=:following_id", [
+        $this->db->query("delete from {$this->table} where follower_id=:follower_id and following_id=:following_id", [
             'follower_id' => $follower_id,
             'following_id' => $followed_id,
         ]);
@@ -36,7 +35,7 @@ class Follow
 
     public function has_followed($follower_id, $followed_id)
     {
-        $result = $this->connection->query("select count(*) from {$this->table} where follower_id=:follower_id and following_id=:following_id", [
+        $result = $this->db->query("select count(*) from {$this->table} where follower_id=:follower_id and following_id=:following_id", [
             'follower_id' => $follower_id,
             'following_id' => $followed_id,
         ])->fetchCol();
@@ -48,7 +47,7 @@ class Follow
 
     public function followers($id)
     {
-        return array_column($this->connection->query("select follower_id from {$this->table} where following_id=:following_id  and status=:status", [
+        return array_column($this->db->query("select follower_id from {$this->table} where following_id=:following_id  and status=:status", [
             'following_id' => $id,
             'status' => 'accepted',
         ])->fetchAll(), 'follower_id');
@@ -56,7 +55,7 @@ class Follow
 
     public function following($id)
     {
-        return $this->connection->query("select following_id from {$this->table} where follower_id=:follower_id  and status=:status", [
+        return $this->db->query("select following_id from {$this->table} where follower_id=:follower_id  and status=:status", [
             'follower_id' => $id,
             'status' => 'accepted',
         ])->fetchAll();
@@ -64,7 +63,7 @@ class Follow
 
     public function follower_count($id)
     {
-        return $this->connection->query("select count(*) from {$this->table} where following_id=:following_id and status=:status", [
+        return $this->db->query("select count(*) from {$this->table} where following_id=:following_id and status=:status", [
             'following_id' => $id,
             'status' => 'accepted'
         ])->fetchCol();
@@ -72,7 +71,7 @@ class Follow
 
     public function following_count($id)
     {
-        return $this->connection->query("select count(*) from {$this->table} where follower_id=:follower_id  and status=:status", [
+        return $this->db->query("select count(*) from {$this->table} where follower_id=:follower_id  and status=:status", [
             'follower_id' => $id,
             'status' => 'accepted'
         ])->fetchCol();
@@ -81,7 +80,7 @@ class Follow
 
     public function checkStatus($follower_id, $followed_id)
     {
-        return $this->connection->query("select status from {$this->table} where follower_id=:follower_id and following_id=:following_id", [
+        return $this->db->query("select status from {$this->table} where follower_id=:follower_id and following_id=:following_id", [
             'follower_id' => $follower_id,
             'following_id' => $followed_id,
         ])->fetch()['status'];

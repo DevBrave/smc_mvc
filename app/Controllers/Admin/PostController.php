@@ -7,12 +7,11 @@ use App\Model\Post;
 
 class PostController
 {
-    protected Post $post;
 
-    public function __construct(Post $post)
-    {
-        $this->post = $post;
-    }
+
+    public function __construct(
+        protected Post $post
+    ) {}
 
     public function index()
     {
