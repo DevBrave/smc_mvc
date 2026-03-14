@@ -12,6 +12,11 @@ const BASE_PATH = __DIR__ . '/../';
 require(BASE_PATH . '/vendor/autoload.php');  // autoload with composer
 
 
+// Register Whoops Error Handler
+$whoops = new \Whoops\Run;
+$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+$whoops->register();
+
 
 session_start();
 

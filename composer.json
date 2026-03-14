@@ -12,6 +12,7 @@
         }
     },
     "require-dev": {
-        "fakerphp/faker": "^1.24"
+        "fakerphp/faker": "^1.24",
+        "filp/whoops": "^2.18"
     }
 }

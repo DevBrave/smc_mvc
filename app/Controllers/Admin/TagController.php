@@ -20,7 +20,6 @@ class TagController
         $tags = $this->tag->all();
         view('admin/tags/index.view.php', [
             'tags' => $tags,
-            'tagModel' => $this->tag,
         ]);
     }
 
