@@ -28,9 +28,12 @@ class Database
         return $this;
     }
 
-    public function fetchAll()
+    public function fetchAll($mode = null, ...$args)
     {
-        return $this->statement->fetchAll();
+        if ($mode === null) {
+            return $this->statement->fetchAll();
+        }
+        return $this->statement->fetchAll($mode, ...$args);
     }
 
     public function fetch()

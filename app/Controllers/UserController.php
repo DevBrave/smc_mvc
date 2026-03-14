@@ -140,9 +140,12 @@ class UserController
     {
 
         $followings = $this->follow->following($this->user->findByUsername($username)['id']);
-        $ids = array_column($followings, 'following_id');
+        $users = [];
+        foreach ($followings as $index => $user_id) {
+            $users[] = $this->user->find($user_id);
+        }
         view('users/show_followers.view.php', [
-            'follows' => $ids,
+            'users' => $users,
             'title' => 'Followings'
         ]);
     }

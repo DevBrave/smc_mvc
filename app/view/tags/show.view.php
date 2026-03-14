@@ -1,10 +1,5 @@
 <?php
 
-use App\Model\Comment;
-use App\Model\LikePost;
-use App\Model\Post;
-use App\Model\User;
-
 layout('header.php');
 ?>
 
@@ -14,10 +9,9 @@ layout('nav.php');
 
 <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
     <div class="mt-4 md:mt-0 text-center md:text-left space-y-2">
-        <h2 class="text-2xl font-bold text-gray-800">All Posts</h2>
+        <h2 class="text-2xl font-bold text-gray-800">All Posts with <a class="underline" href="/tag/<?= $tag['slug'] ?>">#<?= $tag['name'] ?></a> tag </h2>
     </div>
-    <?php foreach ($posts_id as $post_id): ?>
-        <?php $post = $post_model->find($post_id['post_id']) ?>
+    <?php foreach ($posts as $post): ?>
         <div class="mt-12"> <!-- Post Card -->
             <div class="flex gap-4 border-b pb-6">
 
@@ -34,13 +28,13 @@ layout('nav.php');
                     <div class="flex items-center gap-6 mt-2 text-sm text-gray-600">
 
                         <div class="flex items-center gap-1">
-                            <?= '❤️' . LikePost::like_count($post['id']) ?>
+                            <?= '❤️' . $post['like_count'] ?>
                         </div>
                         <div class="flex items-center gap-1">
-                            <?= '💬' . Comment::comment_count($post['id']) ?>
+                            <?= '💬' . $post['comment_count'] ?>
                         </div>
                         <div class="flex items-center gap-1">
-                            <?php if (isset($_SESSION['user']) && $post['user_id'] == (User::findByUsername($_SESSION['user']))['id']): ?>
+                            <?php if ((auth()->check()) && $post['user_id'] == (auth()->user())['id']): ?>
                                 <a href="/post/edit/<?= $post['id'] ?>"
                                     class="inline-flex rounded bg-indigo-600 px-3 py-1.5 text-white text-sm font-semibold shadow-md hover:bg-indigo-700 transition duration-200">
                                     Edit

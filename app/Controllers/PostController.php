@@ -195,11 +195,9 @@ class PostController
         $newTagsId = $attributes['tags'];
 
 
-        $associatedCurrentTag = $this->db->query('select * from post_tag where post_id=:post_id', [
+        $currentTagId = $this->db->query('select tag_id from post_tag where post_id=:post_id', [
             'post_id' => $post_id
-        ])->fetchAll();
-
-        $currentTagId = array_column($associatedCurrentTag, 'tag_id');
+        ])->fetchAll(\PDO::FETCH_COLUMN);
 
 
         $tagsToRemove = array_diff($currentTagId, $newTagsId);

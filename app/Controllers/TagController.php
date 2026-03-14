@@ -3,6 +3,7 @@
 
 namespace App\Controllers;
 
+use App\Model\Comment;
 use App\Model\LikePost;
 use App\Model\Post;
 use App\Model\Tag;
@@ -15,6 +16,7 @@ class TagController
         protected Post $post,
         protected Tag $tag,
         protected LikePost $like_post,
+        protected Comment $comment,
     ) {}
 
     public function index()
@@ -41,19 +43,22 @@ class TagController
     //
     //        redirect("/admin/tags");
     //    }
-
     public function show($slug)
     {
-        $tag_id = $this->tag->findBySlug($slug)['id'];
-        $posts_id = $this->tag->itsPosts($tag_id);
+        $tag = $this->tag->findBySlug($slug);
+        $posts_id = $this->tag->itsPosts($tag['id']);
         $all_posts = [];
         foreach ($posts_id as $index => $post_id) {
-            $all_posts[$index][] = $this->post->find($post_id);
+            $post = $this->post->find($post_id);
+            if ($post) {
+                $post['like_count'] = $this->like_post->like_count($post_id);
+                $post['comment_count'] = $this->comment->comment_count($post_id);
+                $all_posts[] = $post;
+            }
         }
-        dd($all_posts);
         view('tags/show.view.php', [
-            'posts_id' => $posts_id,
-            'post_model' => $this->post
+            'posts' => $all_posts,
+            'tag' => $tag,
         ]);
     }
 }

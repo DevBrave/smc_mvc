@@ -3,7 +3,7 @@
 use App\Model\Tag;
 
 layout('header.php');
-$selectedIds = array_column($tags, 'tag_id');
+$selectedIds = $tags;
 
 ?>
 

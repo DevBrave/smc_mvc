@@ -54,7 +54,7 @@ class Tag
     {
         return $this->db->query("select post_id from post_tag where tag_id=:tag_id", [
             'tag_id' => $tag_id
-        ])->fetchAll();
+        ])->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     public function how_many_posts($tag_id)
@@ -78,9 +78,10 @@ class Tag
 
     public function tag_associated($post_id, $attr = '*')
     {
+        $mode = ($attr !== '*' && !str_contains($attr, ',')) ? \PDO::FETCH_COLUMN : null;
         return $this->db->query("select {$attr} from post_tag where post_id=:post_id", [
             'post_id' => $post_id
-        ])->fetchAll();
+        ])->fetchAll($mode);
     }
 
     public function all()

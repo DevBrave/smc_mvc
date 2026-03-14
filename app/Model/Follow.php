@@ -47,10 +47,10 @@ class Follow
 
     public function followers($id)
     {
-        return array_column($this->db->query("select follower_id from {$this->table} where following_id=:following_id  and status=:status", [
+        return $this->db->query("select follower_id from {$this->table} where following_id=:following_id  and status=:status", [
             'following_id' => $id,
             'status' => 'accepted',
-        ])->fetchAll(), 'follower_id');
+        ])->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     public function following($id)
@@ -58,7 +58,7 @@ class Follow
         return $this->db->query("select following_id from {$this->table} where follower_id=:follower_id  and status=:status", [
             'follower_id' => $id,
             'status' => 'accepted',
-        ])->fetchAll();
+        ])->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     public function follower_count($id)
