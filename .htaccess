@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Stop rewriting if the request already points to the public folder
+RewriteRule ^public/ - [L]
+
+# If the requested file or directory exists in /public, rewrite there without looping
+RewriteCond %{DOCUMENT_ROOT}/public/$1 -f [OR]
+RewriteCond %{DOCUMENT_ROOT}/public/$1 -d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Otherwise, route everything else to public/index.php
+RewriteRule ^(.*)$ public/index.php [QSA,L]

@@ -1,5 +1,4 @@
 <?php
-
 layout('admin/header.php'); ?>
 <?php layout('admin/navbar.php'); ?>
 <!--begin::App Main-->

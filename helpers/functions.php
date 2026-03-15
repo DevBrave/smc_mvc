@@ -107,6 +107,7 @@ function upload_dir($path = null)
 
 function truncateText($text, $maxLength = 100, $suffix = '...')
 {
+    if ($text == NULL) return NULL;
     if (strlen($text) > $maxLength) {
         return substr($text, 0, $maxLength - strlen($suffix)) . $suffix;
     }

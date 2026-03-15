@@ -8,11 +8,11 @@ use App\Middleware\GuestMiddleware;
 return [
     'database' => [
 
-        'host' => 'localhost',
-        'dbname' => 'small_social',
+        'host' => getenv('DB_HOST') ?: 'localhost',
+        'dbname' => getenv('DB_DATABASE') ?: 'small_social',
         'charset' => 'utf8mb4',
-        'username' => 'root',
-        'password' => '',
+        'username' => getenv('DB_USERNAME') ?: 'root',
+        'password' => getenv('DB_PASSWORD') ?: '',
     ],
 
     // Set to true to automatically login as 'admin' in local development

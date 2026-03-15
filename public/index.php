@@ -31,7 +31,6 @@ require(BASE_PATH . 'helpers/functions.php');
 
 $router = new Router();
 
-
 require(base_path('routes/routes.php'));
 require(base_path('routes/api.php'));
 

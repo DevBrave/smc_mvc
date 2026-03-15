@@ -1,7 +1,4 @@
 <?php
-
-use App\Model\Post;
-
 layout('admin/header.php'); ?>
 <?php layout('admin/navbar.php'); ?>
 <!--begin::App Main-->
@@ -73,7 +70,7 @@ layout('admin/header.php'); ?>
 
                                         </td>
                                         <td>
-                                            <?= date("F jS, Y h:i", strtotime($post['updated_at'])) ?>
+                                            <?= $post['updated_at'] ? date("F jS, Y h:i", strtotime($post['updated_at'])) : 'Never updated' ?>
 
                                         </td>
                                     </tr>

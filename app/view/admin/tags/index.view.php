@@ -46,6 +46,7 @@ layout('admin/header.php'); ?>
                                     <th style="width: 10px">#</th>
                                     <th>Name</th>
                                     <th>Slug</th>
+                                    <th>Posts Count</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -62,7 +63,7 @@ layout('admin/header.php'); ?>
                                             <?= $tag['slug'] ?>
                                         </td>
                                         <td>
-                                            <?= $tagModel->how_many_posts($tag['id']) ?>
+                                            <?= $tag['posts_count'] ?>
                                         </td>
                                     </tr>
                                 <?php $i++;

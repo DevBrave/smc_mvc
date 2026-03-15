@@ -18,8 +18,14 @@ class TagController
     public function index()
     {
         $tags = $this->tag->all();
+        $tags_with_posts_count = [];
+        foreach ($tags as $index => $tg) {
+            $post_count = $this->tag->how_many_posts($tg['id']);
+            $tg['posts_count'] = $post_count;
+            $tags_with_posts_count[$index] = $tg;
+        }
         view('admin/tags/index.view.php', [
-            'tags' => $tags,
+            'tags' => $tags_with_posts_count,
         ]);
     }
 
